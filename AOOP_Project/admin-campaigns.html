@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoRecycle — Campaigns</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #10B77F;
+      --green-dark: #10B77F;
+      --green-light: #dcfce7;
+      --navy: #0f172a;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-500: #64748b;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .07), 0 1px 2px rgba(0, 0, 0, .05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      min-height: 100vh;
+      font-size: 16px;
+    }
+
+    [data-lucide] { width: 20px; height: 20px; stroke-width: 2px; }
+
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 28px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      margin-right: 14px;
+    }
+
+    .nav-brand [data-lucide="recycle"] {
+      color: var(--green);
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+
+    .nav-link.active {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .nav-link:not(.active):hover {
+      background: var(--gray-100);
+      color: var(--navy);
+    }
+
+    .nav-actions {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .nav-icon-btn:hover { background: var(--gray-100); }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--white);
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .avatar-container {
+      position: relative;
+    }
+
+    .profile-popup {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 320px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .profile-popup.active {
+      display: flex;
+    }
+
+    .notification-popup {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      width: 360px;
+      max-width: calc(100vw - 32px);
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, .15);
+      z-index: 210;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+
+    .notification-popup.active {
+      display: flex;
+    }
+
+    .notif-popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .notif-popup-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .notif-popup-close {
+      border: none;
+      background: transparent;
+      color: var(--gray-500);
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .notif-popup-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 16px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .notif-card {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: var(--gray-50);
+    }
+
+    .notif-card.unread {
+      background: #f0fdf4;
+      border-left: 4px solid var(--green);
+    }
+
+    .notif-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      flex-shrink: 0;
+    }
+
+    .notif-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .notif-desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .notif-meta {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-top: 8px;
+    }
+
+    .see-all-btn {
+      margin: 0 16px 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--green);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background .15s;
+    }
+
+    .see-all-btn:hover {
+      background: #0d9467;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-email {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-menu-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .profile-menu-item:hover {
+      background: var(--gray-100);
+    }
+
+    .profile-menu-item [data-lucide] {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .profile-menu-item.logout [data-lucide] {
+      color: #ef4444;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .page-sub {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-top: 6px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--green);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+
+    .btn-primary:hover {
+      background: #0d9467;
+      transform: translateY(-1px);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s;
+    }
+
+    .stat-card:hover { box-shadow: var(--shadow-md); }
+
+    .stat-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green-dark);
+      flex-shrink: 0;
+    }
+
+    .stat-val {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    .search-row {
+      margin-bottom: 24px;
+    }
+
+    .search-wrap {
+      position: relative;
+      max-width: 300px;
+    }
+
+    .search-wrap [data-lucide] {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-500);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 11px 14px 11px 38px;
+      background: var(--white);
+      color: var(--navy);
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .search-input::placeholder { color: var(--gray-500); }
+
+    .search-input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(16, 183, 127, .12);
+    }
+
+    .campaigns-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .campaign-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .campaign-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .campaign-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .campaign-id {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .campaign-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.15;
+    }
+
+    .campaign-audience {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .campaign-details {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 16px 0;
+      border-top: 1px solid var(--gray-100);
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-label {
+      font-size: 12px;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-weight: 600;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .cta-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .02em;
+    }
+
+    .badge.sent { background: var(--green-light); color: var(--green-dark); }
+    .badge.scheduled { background: #eff6ff; color: #3b82f6; }
+    .badge.draft { background: #f1f1f0; color: #9aa894; }
+
+    .btn-send {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 14px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      border: 1px solid #b6e8d5;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+
+    .btn-send:hover {
+      background: #d0f0e4;
+      border-color: var(--green);
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      border: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      color: var(--gray-700);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .15s, transform .1s, border-color .15s;
+    }
+
+    .icon-btn:hover {
+      background: var(--white);
+      border-color: var(--gray-300);
+      transform: translateY(-1px);
+    }
+
+    .icon-btn.edit { color: var(--green-dark); }
+    .icon-btn.del { color: #dc2626; }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .4);
+      backdrop-filter: blur(2px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--white);
+      border-radius: 18px;
+      padding: 28px 28px 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .16);
+      animation: modalIn .18s ease;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .modal-head h3 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--gray-500);
+      padding: 6px;
+      border-radius: 8px;
+      transition: background .15s;
+    }
+
+    .modal-close:hover { background: var(--gray-100); }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray-500);
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      background: var(--gray-50);
+      color: var(--navy);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .form-textarea { min-height: 100px; resize: vertical; }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(16, 183, 127, .12);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn-cancel,
+    .btn-save {
+      border-radius: 10px;
+      font-weight: 700;
+      padding: 11px 18px;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .btn-cancel {
+      background: var(--gray-100);
+      color: var(--navy);
+    }
+
+    .btn-cancel:hover { background: var(--gray-200); }
+
+    .btn-save {
+      background: var(--green);
+      color: white;
+    }
+
+    .btn-save:hover { background: #0d9467; }
+
+    @media (max-width: 900px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .campaigns-grid { grid-template-columns: 1fr; }
+      .campaign-details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .nav-links .nav-link span { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <i data-lucide="recycle"></i>
+      <span>EcoRecycle</span>
+      <span class="nav-badge">Admin</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="admin-dashboard.html" class="nav-link">
+         Dashboard
+      </a>
+      <a href="admin-accounts.html" class="nav-link">
+         Accounts
+      </a>
+      <a href="admin-categories.html" class="nav-link">
+         Categories
+      </a>
+      <a href="admin-reward-rules.html" class="nav-link">
+         Reward Rules
+      </a>
+      <a href="admin-campaigns.html" class="nav-link active">
+         Campaigns
+      </a>
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-icon-btn" id="notificationBtn" aria-label="Notifications">
+        <i data-lucide="bell"></i>
+        <span class="notif-dot">2</span>
+      </button>
+      <div class="notification-popup" id="notificationPopup">
+        <div class="notif-popup-header">
+          <div class="notif-popup-title">Notifications</div>
+          <button class="notif-popup-close" type="button" aria-label="Close">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="notif-popup-list">
+          <div class="notif-card unread">
+            <div class="notif-icon"><i data-lucide="bell"></i></div>
+            <div>
+              <div class="notif-title">New approval request</div>
+              <div class="notif-desc">3 user accounts are awaiting approval.</div>
+              <div class="notif-meta">1 hour ago</div>
+            </div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-icon"><i data-lucide="check-circle"></i></div>
+            <div>
+              <div class="notif-title">Campaign delivered</div>
+              <div class="notif-desc">Your latest campaign was sent to 1,240 recipients.</div>
+              <div class="notif-meta">3 days ago</div>
+            </div>
+          </div>
+        </div>
+        <a href="admin-notifications.html" class="see-all-btn">See all notifications</a>
+      </div>
+      <div class="avatar-container">
+        <div class="avatar" id="profileBtn" title="Rahul Sharma">RS</div>
+        <div class="profile-popup" id="profilePopup">
+          <div class="profile-header">
+            <div class="profile-avatar">RS</div>
+            <div class="profile-info">
+              <div class="profile-name">Rahul Sharma</div>
+              <div class="profile-email">rahul@ecorecycle.com</div>
+            </div>
+          </div>
+          <div class="profile-menu">
+            <a href="admin-settings.html" class="profile-menu-item">
+              <i data-lucide="settings"></i>
+              Settings
+            </a>
+            <a href="admin-notifications.html" class="profile-menu-item">
+              <i data-lucide="bell"></i>
+              Notifications
+            </a>
+            <button class="profile-menu-item logout">
+              <i data-lucide="log-out"></i>
+              Log out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Campaigns & Notices</h1>
+        <p class="page-sub">Broadcast awareness campaigns and system notifications</p>
+      </div>
+      <button class="btn-primary" id="openModalBtn">
+        <i data-lucide="plus"></i> New Campaign
+      </button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon-wrap">
+          <i data-lucide="bell"></i>
+        </div>
+        <div>
+          <div class="stat-val">5</div>
+          <div class="stat-label">Total Campaigns</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-wrap">
+          <i data-lucide="send"></i>
+        </div>
+        <div>
+          <div class="stat-val">3</div>
+          <div class="stat-label">Sent</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-wrap">
+          <i data-lucide="eye"></i>
+        </div>
+        <div>
+          <div class="stat-val">2,525</div>
+          <div class="stat-label">Total Recipients</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <div class="search-wrap">
+        <i data-lucide="search"></i>
+        <input class="search-input" type="text" placeholder="Search campaigns..." id="searchInput" />
+      </div>
+    </div>
+
+    <div class="campaigns-grid" id="campaignsGrid">
+      <article class="campaign-card" data-name="World Environment Day Drive" data-id="CMP001">
+        <div class="campaign-top">
+          <div class="campaign-meta">
+            <span class="campaign-id">CMP001</span>
+            <h2 class="campaign-title">World Environment Day Drive</h2>
+            <p class="campaign-audience">All Users</p>
+          </div>
+          <span class="badge sent">sent</span>
+        </div>
+        <div class="campaign-details">
+          <div class="detail-item"><span class="detail-label">Date</span><span class="detail-value">2025-06-05</span></div>
+          <div class="detail-item"><span class="detail-label">Recipients</span><span class="detail-value">1,240</span></div>
+          <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">Sent</span></div>
+        </div>
+        <div class="cta-group">
+          <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+          <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+        </div>
+      </article>
+
+      <article class="campaign-card" data-name="Battery Safety Awareness" data-id="CMP002">
+        <div class="campaign-top">
+          <div class="campaign-meta">
+            <span class="campaign-id">CMP002</span>
+            <h2 class="campaign-title">Battery Safety Awareness</h2>
+            <p class="campaign-audience">All Users</p>
+          </div>
+          <span class="badge sent">sent</span>
+        </div>
+        <div class="campaign-details">
+          <div class="detail-item"><span class="detail-label">Date</span><span class="detail-value">2025-05-15</span></div>
+          <div class="detail-item"><span class="detail-label">Recipients</span><span class="detail-value">1,240</span></div>
+          <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">Sent</span></div>
+        </div>
+        <div class="cta-group">
+          <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+          <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+        </div>
+      </article>
+
+      <article class="campaign-card" data-name="New Recycling Center in Mombasa" data-id="CMP003">
+        <div class="campaign-top">
+          <div class="campaign-meta">
+            <span class="campaign-id">CMP003</span>
+            <h2 class="campaign-title">New Recycling Center in Mombasa</h2>
+            <p class="campaign-audience">Collectors</p>
+          </div>
+          <span class="badge sent">sent</span>
+        </div>
+        <div class="campaign-details">
+          <div class="detail-item"><span class="detail-label">Date</span><span class="detail-value">2025-04-20</span></div>
+          <div class="detail-item"><span class="detail-label">Recipients</span><span class="detail-value">45</span></div>
+          <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">Sent</span></div>
+        </div>
+        <div class="cta-group">
+          <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+          <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+        </div>
+      </article>
+
+      <article class="campaign-card" data-name="March E-Waste Month" data-id="CMP004">
+        <div class="campaign-top">
+          <div class="campaign-meta">
+            <span class="campaign-id">CMP004</span>
+            <h2 class="campaign-title">March E-Waste Month</h2>
+            <p class="campaign-audience">All Users</p>
+          </div>
+          <span class="badge scheduled">scheduled</span>
+        </div>
+        <div class="campaign-details">
+          <div class="detail-item"><span class="detail-label">Date</span><span class="detail-value">2026-03-01</span></div>
+          <div class="detail-item"><span class="detail-label">Recipients</span><span class="detail-value">—</span></div>
+          <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">Scheduled</span></div>
+        </div>
+        <div class="cta-group">
+          <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+          <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+        </div>
+      </article>
+
+      <article class="campaign-card" data-name="Collector Performance Rewards" data-id="CMP005">
+        <div class="campaign-top">
+          <div class="campaign-meta">
+            <span class="campaign-id">CMP005</span>
+            <h2 class="campaign-title">Collector Performance Rewards</h2>
+            <p class="campaign-audience">Collectors</p>
+          </div>
+          <span class="badge draft">draft</span>
+        </div>
+        <div class="campaign-details">
+          <div class="detail-item"><span class="detail-label">Date</span><span class="detail-value">—</span></div>
+          <div class="detail-item"><span class="detail-label">Recipients</span><span class="detail-value">—</span></div>
+          <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">Draft</span></div>
+        </div>
+        <div class="cta-group">
+          <button class="btn-send">
+            <i data-lucide="send"></i> Send
+          </button>
+          <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+          <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">New Campaign</h3>
+        <button class="modal-close" id="closeModalBtn"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Campaign Title</label>
+        <input class="form-input" type="text" placeholder="e.g. World Environment Day Drive" id="inputTitle" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Audience</label>
+        <select class="form-select" id="inputAudience">
+          <option value="">Select audience...</option>
+          <option value="All Users">All Users</option>
+          <option value="Collectors">Collectors</option>
+          <option value="Recycling Centers">Recycling Centers</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Send Date</label>
+          <input class="form-input" type="date" id="inputDate" />
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="inputStatus">
+            <option value="draft">Draft</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="sent">Sent</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-textarea" placeholder="Campaign message content..." id="inputMessage"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelBtn">Cancel</button>
+        <button class="btn-save" id="saveBtn">Save Campaign</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    const overlay = document.getElementById('modalOverlay');
+    const openBtn = document.getElementById('openModalBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const searchInput = document.getElementById('searchInput');
+    const campaignsGrid = document.getElementById('campaignsGrid');
+    const modalTitle = document.getElementById('modalTitle');
+
+    let editingCard = null;
+
+    function openModal(card = null) {
+      editingCard = card;
+      const title = document.getElementById('modalTitle');
+      const inputTitle = document.getElementById('inputTitle');
+      const inputAudience = document.getElementById('inputAudience');
+      const inputDate = document.getElementById('inputDate');
+      const inputStatus = document.getElementById('inputStatus');
+      const inputMessage = document.getElementById('inputMessage');
+
+      if (card) {
+        title.textContent = 'Edit Campaign';
+        inputTitle.value = card.dataset.name;
+        inputAudience.value = card.querySelector('.campaign-audience').textContent;
+        const details = card.querySelectorAll('.detail-value');
+        inputDate.value = details[0].textContent !== '—' ? details[0].textContent : '';
+        inputStatus.value = card.querySelector('.badge').classList[1];
+        inputMessage.value = '';
+      } else {
+        title.textContent = 'New Campaign';
+        inputTitle.value = '';
+        inputAudience.value = '';
+        inputDate.value = '';
+        inputStatus.value = 'draft';
+        inputMessage.value = '';
+      }
+      overlay.classList.add('open');
+    }
+
+    function closeModal() {
+      overlay.classList.remove('open');
+      editingCard = null;
+    }
+
+    openBtn.addEventListener('click', () => openModal());
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+    function removeCard(button) {
+      const card = button.closest('.campaign-card');
+      if (card) card.remove();
+    }
+
+    function sendCampaign(button) {
+      const card = button.closest('.campaign-card');
+      const badge = card.querySelector('.badge');
+      badge.className = 'badge sent';
+      badge.textContent = 'sent';
+      const details = card.querySelectorAll('.detail-value');
+      details[0].textContent = new Date().toISOString().split('T')[0];
+      details[2].textContent = 'Sent';
+      button.remove();
+    }
+
+    function createCampaignCard(id, title, audience, date, recipients, status) {
+      const article = document.createElement('article');
+      article.className = 'campaign-card';
+      article.dataset.name = title;
+      article.dataset.id = id;
+
+      const statusBadge = status === 'sent' ? '<span class="badge sent">sent</span>' :
+                         status === 'scheduled' ? '<span class="badge scheduled">scheduled</span>' :
+                         '<span class="badge draft">draft</span>';
+
+      const sendButton = status === 'draft' ? '<button class="btn-send"><i data-lucide="send"></i> Send</button>' : '';
+
+      article.innerHTML = `
+        <div class="campaign-top">
+          <div class="campaign-meta">
+            <span class="campaign-id">${id}</span>
+            <h2 class="campaign-title">${title}</h2>
+            <p class="campaign-audience">${audience}</p>
+          </div>
+          ${statusBadge}
+        </div>
+        <div class="campaign-details">
+          <div class="detail-item"><span class="detail-label">Date</span><span class="detail-value">${date || '—'}</span></div>
+          <div class="detail-item"><span class="detail-label">Recipients</span><span class="detail-value">${recipients || '—'}</span></div>
+          <div class="detail-item"><span class="detail-label">Status</span><span class="detail-value">${status.charAt(0).toUpperCase() + status.slice(1)}</span></div>
+        </div>
+        <div class="cta-group">
+          ${sendButton}
+          <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+          <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+        </div>
+      `;
+
+      article.querySelectorAll('.icon-btn').forEach(btn => {
+        if (btn.classList.contains('edit')) {
+          btn.addEventListener('click', () => openModal(article));
+        } else if (btn.classList.contains('del')) {
+          btn.addEventListener('click', () => removeCard(btn));
+        }
+      });
+
+      const sendBtn = article.querySelector('.btn-send');
+      if (sendBtn) {
+        sendBtn.addEventListener('click', () => sendCampaign(sendBtn));
+      }
+
+      return article;
+    }
+
+    // Edit button functionality
+    campaignsGrid.querySelectorAll('.icon-btn.edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.campaign-card');
+        openModal(card);
+      });
+    });
+
+    // Delete button functionality
+    campaignsGrid.querySelectorAll('.icon-btn.del').forEach(btn => {
+      btn.addEventListener('click', () => removeCard(btn));
+    });
+
+    // Send button functionality
+    campaignsGrid.querySelectorAll('.btn-send').forEach(btn => {
+      btn.addEventListener('click', () => sendCampaign(btn));
+    });
+
+    // Save button functionality
+    saveBtn.addEventListener('click', () => {
+      const title = document.getElementById('inputTitle').value.trim();
+      const audience = document.getElementById('inputAudience').value.trim();
+      const date = document.getElementById('inputDate').value.trim();
+      const status = document.getElementById('inputStatus').value.trim();
+
+      if (!title || !audience) {
+        alert('Please fill in title and audience');
+        return;
+      }
+
+      if (editingCard) {
+        editingCard.dataset.name = title;
+        editingCard.querySelector('.campaign-title').textContent = title;
+        editingCard.querySelector('.campaign-audience').textContent = audience;
+        const details = editingCard.querySelectorAll('.detail-value');
+        details[0].textContent = date || '—';
+        details[2].textContent = status.charAt(0).toUpperCase() + status.slice(1);
+
+        const badge = editingCard.querySelector('.badge');
+        badge.className = `badge ${status}`;
+        badge.textContent = status;
+      } else {
+        const newId = 'CMP' + String(campaignsGrid.children.length + 1).padStart(3, '0');
+        const newCard = createCampaignCard(newId, title, audience, date, null, status);
+        campaignsGrid.appendChild(newCard);
+      }
+
+      closeModal();
+    });
+
+    // Search filter
+    searchInput.addEventListener('input', function () {
+      const q = this.value.toLowerCase();
+      campaignsGrid.querySelectorAll('.campaign-card').forEach(card => {
+        const title = card.dataset.name.toLowerCase();
+        const audience = card.querySelector('.campaign-audience').textContent.toLowerCase();
+        const id = card.dataset.id.toLowerCase();
+        const isVisible = title.includes(q) || audience.includes(q) || id.includes(q);
+        card.style.display = isVisible ? '' : 'none';
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+lucide.createIcons();
+
+const API = "http://127.0.0.1:8082/api";
+const currentUser = JSON.parse(localStorage.getItem("ecorepair_user") || "null");
+
+if (!currentUser || !currentUser.email) {
+  window.location.href = "Login.html";
+  return;
+}
+
+const profileBtn = document.getElementById("profileBtn");
+const profilePopup = document.getElementById("profilePopup");
+
+// ===== Toggle popup — set up ONCE, outside renderProfile =====
+if (profileBtn && profilePopup) {
+  profileBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    profilePopup.classList.toggle("active");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
+      profilePopup.classList.remove("active");
+    }
+  });
+} else {
+  console.error("profileBtn or profilePopup not found on this page.");
+}
+
+function initials(name) {
+  return (name || "User")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0].toUpperCase())
+    .join("") || "U";
+}
+
+// ===== renderProfile ONLY updates text — no listeners in here =====
+function renderProfile(user) {
+  const ini = initials(user.fullName);
+
+  if (profileBtn) {
+    profileBtn.textContent = ini;
+    profileBtn.title = user.fullName;
+  }
+
+  document.querySelector(".profile-popup .profile-avatar").textContent = ini;
+  document.querySelector(".profile-popup .profile-name").textContent = user.fullName;
+  document.querySelector(".profile-popup .profile-email").textContent = user.email;
+}
+
+async function loadProfile() {
+  renderProfile(currentUser); // instant paint
+
+  try {
+    const res = await fetch(`${API}/users/profile?email=${encodeURIComponent(currentUser.email)}`);
+    if (res.ok) {
+      const freshUser = await res.json();
+      renderProfile(freshUser); // overwrite with fresh data — text only, no re-attaching listeners
+      localStorage.setItem("ecorepair_user", JSON.stringify({ ...currentUser, ...freshUser }));
+    }
+  } catch (err) {
+    console.error("Could not refresh profile:", err);
+  }
+}
+
+loadProfile();
+
+// Logout
+document.querySelector(".profile-menu-item.logout")?.addEventListener("click", () => {
+  localStorage.removeItem("ecorepair_user");
+  window.location.href = "Login.html";
+});
+
+});
+
+      const notificationBtn = document.getElementById('notificationBtn');
+      const notificationPopup = document.getElementById('notificationPopup');
+      const notificationClose = document.querySelector('.notif-popup-close');
+
+      if (notificationBtn && notificationPopup) {
+        notificationBtn.addEventListener('click', () => notificationPopup.classList.toggle('active'));
+        if (notificationClose) {
+          notificationClose.addEventListener('click', () => notificationPopup.classList.remove('active'));
+        }
+        document.addEventListener('click', e => {
+          if (!notificationBtn.contains(e.target) && !notificationPopup.contains(e.target)) {
+            notificationPopup.classList.remove('active');
+          }
+        });
+      }
+    
+  </script>
+</body>
+</html>

@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoRecycle — Accounts</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --green: #10B77F;
+      --green-dark: #10B77F;
+      --green-light: #dcfce7;
+      --navy: #0f172a;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-500: #64748b;
+      --white: #ffffff;
+      --radius: 12px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, .06);
+      --bg: var(--gray-100);
+      --surface: var(--white);
+      --border: var(--gray-200);
+      --text: var(--navy);
+      --muted: var(--gray-500);
+      --green-mid: var(--green-dark);
+      --accent: var(--green);
+      --accent-light: var(--green-light);
+      --blue: #2563eb;
+      --red: #ef4444;
+      --red-light: #fee2e2;
+      --dark: var(--navy);
+      --nav-h: 56px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    [data-lucide] {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+    }
+
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 28px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      margin-right: 14px;
+    }
+
+    .nav-brand [data-lucide="recycle"] {
+      color: var(--green);
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm, 8px);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+
+    .nav-link.active {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .nav-link:not(.active):hover {
+      background: var(--gray-100);
+      color: var(--navy);
+    }
+
+    .nav-actions {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .nav-icon-btn:hover {
+      background: var(--gray-100);
+    }
+
+    .nav-icon-btn:hover { background: var(--gray-100); }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--white);
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .avatar-container {
+      position: relative;
+    }
+
+    .profile-popup {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 320px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .profile-popup.active {
+      display: flex;
+    }
+
+    .notification-popup {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      width: 360px;
+      max-width: calc(100vw - 32px);
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, .15);
+      z-index: 210;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+
+    .notification-popup.active {
+      display: flex;
+    }
+
+    .notif-popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .notif-popup-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .notif-popup-close {
+      border: none;
+      background: transparent;
+      color: var(--gray-500);
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .notif-popup-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 16px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .notif-card {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: var(--gray-50);
+    }
+
+    .notif-card.unread {
+      background: #f0fdf4;
+      border-left: 4px solid var(--green);
+    }
+
+    .notif-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      flex-shrink: 0;
+    }
+
+    .notif-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .notif-desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .notif-meta {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-top: 8px;
+    }
+
+    .see-all-btn {
+      margin: 0 16px 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--green);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background .15s;
+    }
+
+    .see-all-btn:hover {
+      background: #0d9467;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-email {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-menu-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .profile-menu-item:hover {
+      background: var(--gray-100);
+    }
+
+    .profile-menu-item [data-lucide] {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .profile-menu-item.logout [data-lucide] {
+      color: #ef4444;
+    }
+
+
+    /* MAIN */
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -.3px;
+    }
+
+    .page-sub {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin-top: 4px;
+      margin-bottom: 24px;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      gap: 4px;
+      width: fit-content;
+      margin-bottom: 32px;
+    }
+
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 20px;
+      border-radius: 7px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s;
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .tab:hover {
+      color: var(--text);
+    }
+
+    .tab.active {
+      background: var(--surface);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+      color: var(--text);
+      font-weight: 600;
+      border: 1px solid var(--border);
+    }
+
+    .panel-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 16px 22px 0;
+    }
+
+    .panel-tab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--gray-100);
+      color: var(--muted);
+      border: none;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      font-weight: 600;
+    }
+
+    .panel-tab.active {
+      background: var(--white);
+      color: var(--navy);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+      border: 1px solid var(--border);
+    }
+
+    /* SECTION */
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -.2px;
+    }
+
+    .section-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 3px;
+      margin-bottom: 20px;
+    }
+
+    /* STATS */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .si-teal {
+      background: #f0fdfa;
+      color: #0d9488;
+    }
+
+    .si-green {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .si-orange {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .stat-value {
+      font-size: 30px;
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: -.5px;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* TABLE / LIST PANEL */
+    .table-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 14px;
+      min-width: 220px;
+      transition: border-color .15s;
+    }
+
+    .search-wrap:focus-within {
+      border-color: var(--green);
+    }
+
+    .search-wrap i {
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .search-wrap input {
+      border: none;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+    }
+
+    .search-wrap input::placeholder {
+      color: var(--muted);
+    }
+
+    /* CARD LIST */
+    .list-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .user-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .td-id {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .td-name {
+      font-weight: 600;
+    }
+
+    .td-email {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card-stats {
+      display: flex;
+      gap: 18px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .card-stat {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .card-stat-value {
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .points-icon {
+      color: var(--green-mid);
+    }
+
+    /* TAB PANELS */
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .btn-green {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--green);
+      color: var(--white);
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, transform .15s;
+    }
+
+    .btn-green:hover {
+      background: #0d9d6c;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 300;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      width: min(100%, 560px);
+      background: var(--white);
+      border-radius: var(--radius-lg, 20px);
+      padding: 24px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, .18);
+      max-height: calc(100vh - 80px);
+      overflow: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      border: none;
+      background: transparent;
+      color: var(--gray-500);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .modal-hero {
+      display: flex;
+      gap: 14px;
+      padding: 18px 16px;
+      margin-bottom: 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(16, 183, 127, 0.2);
+      background: rgba(220, 246, 231, 0.8);
+    }
+
+    .modal-hero .hero-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(16, 183, 127, 0.16);
+      color: var(--green-dark);
+    }
+
+    .modal-hero .hero-icon [data-lucide] {
+      width: 20px;
+      height: 20px;
+    }
+
+    .modal-hero .hero-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--navy);
+    }
+
+    .modal-hero .hero-sub {
+      font-size: 13px;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .field-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+    }
+
+    .field-group input,
+    .field-group select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      background: var(--white);
+      color: var(--navy);
+    }
+
+    .field-group input:focus,
+    .field-group select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(16, 183, 127, 0.12);
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .checkbox-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+
+    .checkbox-card:hover {
+      border-color: var(--green);
+      background: var(--gray-50);
+    }
+
+    .checkbox-card input {
+      accent-color: var(--green);
+      width: 16px;
+      height: 16px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      color: var(--navy);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-300);
+    }
+
+    .checkbox-card span {
+      font-size: 13px;
+      color: var(--navy);
+    }
+
+    /* badges/buttons */
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .badge-active {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    .badge-pending {
+      background: var(--accent-light);
+      color: #92400e;
+    }
+
+    .badge-blocked {
+      background: var(--red-light);
+      color: var(--red);
+    }
+
+    .badge-inactive {
+      background: var(--gray-200);
+      color: var(--muted);
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: all .15s;
+      border: 1.5px solid;
+    }
+
+    .btn-block {
+      background: none;
+      border-color: var(--border);
+      color: var(--red);
+    }
+
+    .btn-block:hover {
+      background: var(--red-light);
+      border-color: var(--red);
+    }
+
+    .btn-approve {
+      background: none;
+      border-color: var(--border);
+      color: var(--green);
+    }
+
+    .btn-approve:hover {
+      background: var(--green-light);
+      border-color: var(--green);
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .stats {
+        grid-template-columns: repeat(1, 1fr);
+      }
+
+      .list-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .row-2 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-brand">
+      <i data-lucide="recycle"></i>
+      <span>EcoRecycle</span>
+      <span class="nav-badge">Admin</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+      <a href="admin-accounts.html" class="nav-link active">Accounts</a>
+      <a href="admin-categories.html" class="nav-link">Categories</a>
+      <a href="admin-reward-rules.html" class="nav-link">Reward Rules</a>
+      <a href="admin-campaigns.html" class="nav-link">Campaigns</a>
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-icon-btn" id="notificationBtn" aria-label="Notifications">
+        <i data-lucide="bell"></i>
+        <span class="notif-dot">2</span>
+      </button>
+      <div class="notification-popup" id="notificationPopup">
+        <div class="notif-popup-header">
+          <div class="notif-popup-title">Notifications</div>
+          <button class="notif-popup-close" type="button" aria-label="Close">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="notif-popup-list">
+          <div class="notif-card unread">
+            <div class="notif-icon"><i data-lucide="bell"></i></div>
+            <div>
+              <div class="notif-title">New approval request</div>
+              <div class="notif-desc">3 user accounts are awaiting approval.</div>
+              <div class="notif-meta">1 hour ago</div>
+            </div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-icon"><i data-lucide="check-circle"></i></div>
+            <div>
+              <div class="notif-title">Campaign delivered</div>
+              <div class="notif-desc">Your latest campaign was sent to 1,240 recipients.</div>
+              <div class="notif-meta">3 days ago</div>
+            </div>
+          </div>
+        </div>
+        <a href="admin-notifications.html" class="see-all-btn">See all notifications</a>
+      </div>
+      <div class="avatar-container">
+        <div class="avatar" id="profileBtn" title="Rahul Sharma">RS</div>
+        <div class="profile-popup" id="profilePopup">
+          <div class="profile-header">
+            <div class="profile-avatar">RS</div>
+            <div class="profile-info">
+              <div class="profile-name">Rahul Sharma</div>
+              <div class="profile-email">rahul@ecorecycle.com</div>
+            </div>
+          </div>
+          <div class="profile-menu">
+            <a href="admin-settings.html" class="profile-menu-item">
+              <i data-lucide="settings"></i>
+              Settings
+            </a>
+            <a href="admin-notifications.html" class="profile-menu-item">
+              <i data-lucide="bell"></i>
+              Notifications
+            </a>
+            <button class="profile-menu-item logout">
+              <i data-lucide="log-out"></i>
+              Log out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+
+    <h1 class="page-title">Accounts</h1>
+    <p class="page-sub">Manage users, collectors, and recycling centers in one place</p>
+
+    <!-- TABS AND ACTIONS -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px;">
+      <div class="tabs" style="margin-bottom: 0;">
+        <button type="button" class="tab active" data-tab="users">
+          <i data-lucide="user" width="14" height="14"></i> Users
+        </button>
+        <button type="button" class="tab" data-tab="collectors">
+          <i data-lucide="truck" width="14" height="14"></i> Collectors
+        </button>
+        <button type="button" class="tab" data-tab="centers">
+          <i data-lucide="building-2" width="14" height="14"></i> Recycling Centers
+        </button>
+      </div>
+      <button class="btn-green" id="tabActionBtn" type="button" style="display:none; margin-top: 4px;">Add</button>
+    </div>
+
+    <!-- SECTION HEADER -->
+    <div class="section-title">Users</div>
+    <p class="section-sub">Manage user accounts and approvals</p>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-icon si-teal"><i data-lucide="users" width="20" height="20"></i></div>
+        <div>
+          <div class="stat-value">5</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon si-green"><i data-lucide="circle-check-big" width="20" height="20"></i></div>
+        <div>
+          <div class="stat-value">3</div>
+          <div class="stat-label">Active</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon si-orange"><i data-lucide="medal" width="20" height="20"></i></div>
+        <div>
+          <div class="stat-value">1280</div>
+          <div class="stat-label">Points Issued</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIST (card style) -->
+    <div class="table-panel">
+      <div class="table-header">
+        <span class="table-title">All Users</span>
+        <div class="search-wrap">
+          <i data-lucide="search" width="14" height="14"></i>
+          <input type="text" placeholder="Search..." />
+        </div>
+      </div>
+
+      <div class="tab-panel active" data-tab="users">
+        <div class="panel-tabs">
+          <button type="button" class="panel-tab active" data-panel="users" data-filter="all">All</button>
+          <button type="button" class="panel-tab" data-panel="users" data-filter="pending">Pending</button>
+          <button type="button" class="panel-tab" data-panel="users" data-filter="active">Active</button>
+          <button type="button" class="panel-tab" data-panel="users" data-filter="blocked">Blocked</button>
+        </div>
+        <div class="list-grid" id="usersGrid"></div>
+      </div>
+
+      <div class="tab-panel" data-tab="collectors">
+        <div class="panel-tabs">
+          <button type="button" class="panel-tab active" data-panel="collectors" data-filter="all">All</button>
+          <button type="button" class="panel-tab" data-panel="collectors" data-filter="active">Active</button>
+          <button type="button" class="panel-tab" data-panel="collectors" data-filter="blocked">Blocked</button>
+        </div>
+        <div class="list-grid" id="collectorsGrid">
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tab="centers">
+        <div class="panel-tabs">
+          <button type="button" class="panel-tab active" data-panel="centers" data-filter="all">All</button>
+          <button type="button" class="panel-tab" data-panel="centers" data-filter="active">Active</button>
+          <button type="button" class="panel-tab" data-panel="centers" data-filter="inactive">Inactive</button>
+        </div>
+        <div class="list-grid" id="centersGrid">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="collectorModal">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="collectorModalTitle">
+        <div class="modal-header">
+          <div class="modal-title" id="collectorModalTitle">Add Collector</div>
+          <button class="modal-close" type="button" aria-label="Close collector modal" onclick="closeCollectorModal()">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="row-2" style="margin-bottom: 16px;">
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="collectorName">Full Name</label>
+            <input type="text" id="collectorName" placeholder="E.g. John Doe" />
+          </div>
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="collectorPhone">Contact Number</label>
+            <input type="text" id="collectorPhone" placeholder="E.g. +880 1711 223344" />
+          </div>
+        </div>
+        <div class="row-2" style="margin-bottom: 16px;">
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="collectorEmail">Email Address</label>
+            <input type="email" id="collectorEmail" placeholder="E.g. james@example.com" />
+          </div>
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="collectorPassword">Password</label>
+            <input type="password" id="collectorPassword" placeholder="Minimum 6 characters" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label for="collectorCenter">Recycling Center (optional)</label>
+          <select id="collectorCenter">
+            <option value="">Unassigned</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" type="button" onclick="closeCollectorModal()">Cancel</button>
+          <button class="btn-green" type="button" onclick="submitCollectorForm()">Add Collector</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="centerModal">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="centerModalTitle">
+        <div class="modal-header">
+          <div class="modal-title" id="centerModalTitle">Add Recycling Center</div>
+          <button class="modal-close" type="button" aria-label="Close center modal" onclick="closeCenterModal()">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="row-2" style="margin-bottom: 16px;">
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="centerName">Center Name</label>
+            <input type="text" id="centerName" placeholder="E.g. GreenLoop Dhaka" />
+          </div>
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="centerPhone">Contact Number</label>
+            <input type="text" id="centerPhone" placeholder="E.g. +880 1711 223344" />
+          </div>
+        </div>
+        <div class="row-2" style="margin-bottom: 16px;">
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="centerEmail">Email Address</label>
+            <input type="email" id="centerEmail" placeholder="E.g. center@example.com" />
+          </div>
+          <div class="field-group" style="margin-bottom: 0;">
+            <label for="centerPassword">Password</label>
+            <input type="password" id="centerPassword" placeholder="Minimum 6 characters" />
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Operating Areas</label>
+          <div class="checkbox-grid" id="centerAreasList">
+            <label class="checkbox-card"><input type="checkbox" value="Dhanmondi" /><span>Dhanmondi</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Gulshan" /><span>Gulshan</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Banani" /><span>Banani</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Bashundhara" /><span>Bashundhara</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Mirpur" /><span>Mirpur</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Pallabi" /><span>Pallabi</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Mohammadpur" /><span>Mohammadpur</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Uttara" /><span>Uttara</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Tongi" /><span>Tongi</span></label>
+            <label class="checkbox-card"><input type="checkbox" value="Tejgaon" /><span>Tejgaon</span></label>
+          </div>
+        </div>
+        <div class="field-group">
+          <label>Assign Collectors</label>
+          <div id="centerCollectorsList" class="checkbox-grid"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" type="button" onclick="closeCenterModal()">Cancel</button>
+          <button class="btn-green" type="button" onclick="submitCenterForm()">Add Center</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+  
+      const API = 'http://127.0.0.1:8082/api';
+  
+      const tabActionBtn = document.getElementById('tabActionBtn');
+      const collectorModal = document.getElementById('collectorModal');
+      const centerModal = document.getElementById('centerModal');
+      const collectorCenterInput = document.getElementById('collectorCenter');
+      const centerCollectorsList = document.getElementById('centerCollectorsList');
+      const usersGrid = document.getElementById('usersGrid');
+  
+      const tabs = document.querySelectorAll('.tab');
+      const panels = document.querySelectorAll('.tab-panel');
+      const panelTabs = document.querySelectorAll('.panel-tab');
+      const stats = document.querySelector('.stats');
+      const sectionTitle = document.querySelector('.section-title');
+      const sectionSub = document.querySelector('.section-sub');
+      const tableTitle = document.querySelector('.table-title');
+      const searchInput = document.querySelector('.search-wrap input');
+      const filterLabels = { all: 'All', pending: 'Pending', active: 'Active', blocked: 'Blocked', inactive: 'Inactive' };
+  
+      let currentFilter = 'all';
+      let searchTerm = '';
+      let allUsers = [];
+  
+      // ---------- helpers ----------
+      function esc(str) {
+        return String(str ?? '').replace(/[&<>"']/g, c => ({
+          '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+      }
+  
+      function getActiveTab() {
+        return Array.from(tabs).find(t => t.classList.contains('active'))?.dataset.tab || 'users';
+      }
+  
+      // ---------- tabs / filters / search ----------
+      function updateTableTitle(tab, filter) {
+        if (!tableTitle) return;
+        const tabLabel = tab === 'users' ? 'Users' : tab === 'collectors' ? 'Collectors' : 'Centers';
+        tableTitle.textContent = `${filterLabels[filter] || 'All'} ${tabLabel}`;
+      }
+  
+      function applyPanelFilter(panelName, filter) {
+        const panel = document.querySelector(`.tab-panel[data-tab="${panelName}"]`);
+        if (!panel) return;
+        panel.querySelectorAll('.user-card').forEach(card => {
+          const status = card.dataset.status || 'all';
+          const matchesStatus = filter === 'all' || status === filter;
+          const matchesSearch = !searchTerm || card.textContent.toLowerCase().includes(searchTerm);
+          card.style.display = matchesStatus && matchesSearch ? '' : 'none';
+        });
+      }
+  
+      function resetPanelFilter(panelName) {
+        const buttons = Array.from(panelTabs).filter(btn => btn.dataset.panel === panelName);
+        const activeButton = buttons.find(btn => btn.dataset.filter === 'all') || buttons[0];
+        buttons.forEach(btn => btn.classList.toggle('active', btn === activeButton));
+        return activeButton?.dataset.filter || 'all';
+      }
+  
+      function updateHeaderFor(tab) {
+        if (tab === 'users') {
+          sectionTitle.textContent = 'Users';
+          sectionSub.textContent = 'Manage user accounts and approvals';
+          if (stats) stats.style.display = '';
+          if (searchInput) searchInput.placeholder = 'Search users...';
+        } else if (tab === 'collectors') {
+          sectionTitle.textContent = 'Collectors';
+          sectionSub.textContent = 'Manage collector accounts and assignments';
+          if (stats) stats.style.display = 'none';
+          if (searchInput) searchInput.placeholder = 'Search collectors...';
+        } else if (tab === 'centers') {
+          sectionTitle.textContent = 'Recycling Centers';
+          sectionSub.textContent = 'Manage registered recycling centers';
+          if (stats) stats.style.display = 'none';
+          if (searchInput) searchInput.placeholder = 'Search centers...';
+        }
+        updateTableTitle(tab, currentFilter);
+        updateActionButton(tab);
+      }
+  
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const target = tab.dataset.tab;
+          tabs.forEach(t => t.classList.toggle('active', t === tab));
+          panels.forEach(p => p.classList.toggle('active', p.dataset.tab === target));
+          searchTerm = '';
+          if (searchInput) searchInput.value = '';
+          currentFilter = resetPanelFilter(target);
+          applyPanelFilter(target, currentFilter);
+          updateHeaderFor(target);
+        });
+      });
+  
+      panelTabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const panel = btn.dataset.panel;
+          const filter = btn.dataset.filter;
+          currentFilter = filter;
+          panelTabs.forEach(p => {
+            if (p.dataset.panel === panel) p.classList.toggle('active', p === btn);
+          });
+          applyPanelFilter(panel, filter);
+          updateTableTitle(panel, filter);
+        });
+      });
+  
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          searchTerm = searchInput.value.trim().toLowerCase();
+          applyPanelFilter(getActiveTab(), currentFilter);
+        });
+      }
+  
+      // ---------- USERS (backend) ----------
+      // GET {API}/admin/users -> [{ id, fullName, email, status, pickups, points, createdAt }]
+      // PUT {API}/admin/users/{id}/status -> body { "status": "active" | "blocked" | "pending" }
+      async function loadUsers() {
+        if (!usersGrid) return;
+        try {
+          const res = await fetch(`${API}/admin/users`);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          allUsers = await res.json();
+          renderUsers();
+        } catch (err) {
+          console.error('Could not load users:', err);
+          usersGrid.innerHTML = '<div style="color: var(--gray-500);">Could not load users. Is the backend running?</div>';
+        }
+      }
+  
+      function renderUsers() {
+        if (!usersGrid) return;
+  
+        if (!allUsers.length) {
+          usersGrid.innerHTML = '<div style="color: var(--gray-500);">No users found.</div>';
+        } else {
+          usersGrid.innerHTML = allUsers.map(u => {
+            const status = String(u.status || 'pending').toLowerCase();
+            const joined = String(u.createdAt || '').slice(0, 10) || '-';
+            const action = status === 'active'
+              ? { label: 'Block', cls: 'btn-block', icon: 'ban', next: 'blocked' }
+              : { label: status === 'blocked' ? 'Unblock' : 'Approve', cls: 'btn-approve', icon: 'circle-check', next: 'active' };
+  
+            return `
+            <div class="user-card" data-status="${esc(status)}">
+              <div class="card-top">
+                <div>
+                  <div class="td-id">USR${String(u.id).padStart(3, '0')}</div>
+                  <div class="td-name">${esc(u.fullName)}</div>
+                  <div class="td-email">${esc(u.email)}</div>
+                </div>
+                <div><span class="badge badge-${esc(status)}">${esc(status)}</span></div>
+              </div>
+              <div class="card-stats">
+                <div class="card-stat"><div class="card-stat-label">Pickups</div><div class="card-stat-value">${Number(u.pickups) || 0}</div></div>
+                <div class="card-stat"><div class="card-stat-label">Points</div><div class="card-stat-value"><i data-lucide="medal" width="13" height="13" class="points-icon"></i> ${Number(u.points) || 0}</div></div>
+                <div class="card-stat"><div class="card-stat-label">Joined</div><div class="card-stat-value">${esc(joined)}</div></div>
+              </div>
+              <div class="card-actions">
+                <button type="button" class="btn-action ${action.cls}" data-user-id="${esc(u.id)}" data-next="${action.next}">
+                  <i data-lucide="${action.icon}" width="13" height="13"></i> ${action.label}
+                </button>
+              </div>
+            </div>`;
+          }).join('');
+        }
+  
+        lucide.createIcons();
+        updateUserStats();
+        applyPanelFilter('users', currentFilter);
+      }
+  
+      function updateUserStats() {
+        const values = document.querySelectorAll('.stats .stat-value');
+        if (values.length < 3) return;
+        values[0].textContent = allUsers.length;
+        values[1].textContent = allUsers.filter(u => String(u.status || '').toLowerCase() === 'active').length;
+        values[2].textContent = allUsers.reduce((sum, u) => sum + (Number(u.points) || 0), 0);
+      }
+  
+      if (usersGrid) {
+        usersGrid.addEventListener('click', async e => {
+          const btn = e.target.closest('button[data-user-id]');
+          if (!btn) return;
+          btn.disabled = true;
+          try {
+            const res = await fetch(`${API}/admin/users/${encodeURIComponent(btn.dataset.userId)}/status`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: btn.dataset.next })
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const user = allUsers.find(u => String(u.id) === btn.dataset.userId);
+            if (user) user.status = btn.dataset.next;
+            renderUsers();
+          } catch (err) {
+            console.error('Status update failed:', err);
+            alert('Could not update the user. Please try again.');
+            btn.disabled = false;
+          }
+        });
+      }
+  
+      // ---------- shared local state (collectors / centers) ----------
+      function initSharedState() {
+        if (!localStorage.getItem('ecorecycle_centers')) {
+          localStorage.setItem('ecorecycle_centers', JSON.stringify([
+            { id: 'CTR-001', name: 'GreenLoop Dhaka', contact: '+880 1711 223344', operatingAreas: ['Gulshan', 'Banani'], assignedCollectors: ['COL-002'] },
+            { id: 'CTR-002', name: 'EcoHub Mirpur', contact: '+880 1712 334455', operatingAreas: ['Mirpur', 'Pallabi'], assignedCollectors: [] }
+          ]));
+        }
+        if (!localStorage.getItem('ecorecycle_collectors')) {
+          localStorage.setItem('ecorecycle_collectors', JSON.stringify([
+            { id: 'COL-001', fullName: 'James Mwangi', phone: '+880 1713 445566', center: '' },
+            { id: 'COL-002', fullName: 'Alice Chebet', phone: '+880 1714 556677', center: 'CTR-001' }
+          ]));
+        }
+      }
+  
+      function getCenters() {
+        initSharedState();
+        return JSON.parse(localStorage.getItem('ecorecycle_centers')) || [];
+      }
+  
+      function getCollectors() {
+        initSharedState();
+        return JSON.parse(localStorage.getItem('ecorecycle_collectors')) || [];
+      }
+  
+      function saveCenters(centers) {
+        localStorage.setItem('ecorecycle_centers', JSON.stringify(centers));
+      }
+  
+      function saveCollectors(collectors) {
+        localStorage.setItem('ecorecycle_collectors', JSON.stringify(collectors));
+      }
+  
+      function generateId(prefix, existing) {
+        const max = existing.reduce((m, item) => {
+          const n = parseInt(String(item.id).split('-')[1], 10);
+          return Number.isNaN(n) ? m : Math.max(m, n);
+        }, 0);
+        return `${prefix}-${String(max + 1).padStart(3, '0')}`;
+      }
+  
+      // ---------- collector modal ----------
+      function populateCollectorCenterOptions() {
+        if (!collectorCenterInput) return;
+        collectorCenterInput.innerHTML = '<option value="">Unassigned</option>' +
+          getCenters().map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
+      }
+  
+      function renderUnassignedCollectors() {
+        if (!centerCollectorsList) return;
+        const collectors = getCollectors().filter(c => !c.center);
+        if (collectors.length === 0) {
+          centerCollectorsList.innerHTML = '<div style="color: var(--gray-500); grid-column: span 2;">No unassigned collectors. Add one from the Collectors tab first.</div>';
+          return;
+        }
+        centerCollectorsList.innerHTML = collectors.map(c => `
+          <label class="checkbox-card">
+            <input type="checkbox" value="${esc(c.id)}" />
+            <span>${esc(c.fullName)}</span>
+          </label>
+        `).join('');
+      }
+  
+      function openCollectorModal() {
+        populateCollectorCenterOptions();
+        if (collectorModal) collectorModal.classList.add('active');
+      }
+  
+      function closeCollectorModal() {
+        if (collectorModal) collectorModal.classList.remove('active');
+        document.getElementById('collectorName').value = '';
+        document.getElementById('collectorPhone').value = '';
+        document.getElementById('collectorEmail').value = '';
+        document.getElementById('collectorPassword').value = '';
+        if (collectorCenterInput) collectorCenterInput.value = '';
+      }
+  
+      function submitCollectorForm() {
+        const name = document.getElementById('collectorName').value.trim();
+        const phone = document.getElementById('collectorPhone').value.trim();
+        const email = document.getElementById('collectorEmail').value.trim();
+        const password = document.getElementById('collectorPassword').value.trim();
+        const centerId = collectorCenterInput?.value || '';
+  
+        if (!name || !phone || !email || !password) {
+          alert('Please enter name, contact number, email, and password.');
+          return;
+        }
+  
+        const collectors = getCollectors();
+        const centers = getCenters();
+        const newCollector = { id: generateId('COL', collectors), fullName: name, phone, email, password, center: centerId };
+        collectors.push(newCollector);
+  
+        if (centerId) {
+          const center = centers.find(c => c.id === centerId);
+          if (center) {
+            center.assignedCollectors = center.assignedCollectors || [];
+            center.assignedCollectors.push(newCollector.id);
+          }
+        }
+  
+        saveCollectors(collectors);
+        saveCenters(centers);
+        closeCollectorModal();
+        renderCollectors();
+        if (getActiveTab() === 'collectors') applyPanelFilter('collectors', currentFilter);
+        alert('Collector added successfully.');
+      }
+  
+      // ---------- center modal ----------
+      function openCenterModal() {
+        renderUnassignedCollectors();
+        if (centerModal) centerModal.classList.add('active');
+      }
+  
+      function closeCenterModal() {
+        if (centerModal) centerModal.classList.remove('active');
+        document.getElementById('centerName').value = '';
+        document.getElementById('centerPhone').value = '';
+        document.getElementById('centerEmail').value = '';
+        document.getElementById('centerPassword').value = '';
+        document.querySelectorAll('#centerAreasList input[type="checkbox"]').forEach(cb => cb.checked = false);
+        if (centerCollectorsList) centerCollectorsList.innerHTML = '';
+      }
+  
+      function submitCenterForm() {
+        const name = document.getElementById('centerName').value.trim();
+        const phone = document.getElementById('centerPhone').value.trim();
+        const email = document.getElementById('centerEmail').value.trim();
+        const password = document.getElementById('centerPassword').value.trim();
+        const selectedAreas = Array.from(document.querySelectorAll('#centerAreasList input[type="checkbox"]:checked')).map(cb => cb.value);
+        const selectedCollectors = Array.from(document.querySelectorAll('#centerCollectorsList input[type="checkbox"]:checked')).map(cb => cb.value);
+  
+        if (!name || !phone || !email || !password) {
+          alert('Please enter center name, contact number, email, and password.');
+          return;
+        }
+        if (selectedAreas.length === 0) {
+          alert('Please select at least one operating area.');
+          return;
+        }
+  
+        const centers = getCenters();
+        const collectors = getCollectors();
+        const centerId = generateId('CTR', centers);
+        centers.push({ id: centerId, name, contact: phone, email, password, operatingAreas: selectedAreas, assignedCollectors: selectedCollectors });
+  
+        const updatedCollectors = collectors.map(c => selectedCollectors.includes(c.id) ? { ...c, center: centerId } : c);
+        saveCenters(centers);
+        saveCollectors(updatedCollectors);
+        closeCenterModal();
+        renderCenters();
+        renderCollectors();
+        if (getActiveTab() === 'centers') applyPanelFilter('centers', currentFilter);
+        alert('Center added successfully.');
+      }
+  
+      function updateActionButton(tab) {
+        if (!tabActionBtn) return;
+        if (tab === 'collectors') {
+          tabActionBtn.textContent = 'Add Collector';
+          tabActionBtn.style.display = 'inline-flex';
+          tabActionBtn.dataset.action = 'collector';
+        } else if (tab === 'centers') {
+          tabActionBtn.textContent = 'Add Center';
+          tabActionBtn.style.display = 'inline-flex';
+          tabActionBtn.dataset.action = 'center';
+        } else {
+          tabActionBtn.style.display = 'none';
+          tabActionBtn.dataset.action = '';
+        }
+      }
+  
+      if (tabActionBtn) {
+        tabActionBtn.addEventListener('click', () => {
+          if (tabActionBtn.dataset.action === 'collector') openCollectorModal();
+          if (tabActionBtn.dataset.action === 'center') openCenterModal();
+        });
+      }
+  
+      // ---------- collector / center cards ----------
+      function renderCollectors() {
+        const collectorsGrid = document.getElementById('collectorsGrid');
+        if (!collectorsGrid) return;
+        const collectors = getCollectors();
+        const centers = getCenters();
+  
+        collectorsGrid.innerHTML = collectors.map(collector => {
+          const center = centers.find(c => c.id === collector.center);
+          const centerName = center ? center.name : 'Unassigned';
+          const assignedCount = collector.center ? 1 : 0;
+          const joined = '2025-01-01';
+          const status = collector.status || 'active';
+  
+          return `
+          <div class="user-card" data-status="${esc(status)}">
+            <div class="card-top">
+              <div>
+                <div class="td-id">${esc(collector.id)}</div>
+                <div class="td-name">${esc(collector.fullName)}</div>
+                <div class="td-email">${collector.email ? esc(collector.email) + ' • ' : ''}${esc(collector.phone)}</div>
+              </div>
+              <div><span class="badge badge-${esc(status)}">${esc(status)}</span></div>
+            </div>
+            <div class="card-stats">
+              <div class="card-stat"><div class="card-stat-label">Assigned</div><div class="card-stat-value">${assignedCount}</div></div>
+              <div class="card-stat"><div class="card-stat-label">Center</div><div class="card-stat-value" style="font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" title="${esc(centerName)}">${esc(centerName)}</div></div>
+              <div class="card-stat"><div class="card-stat-label">Joined</div><div class="card-stat-value">${joined}</div></div>
+            </div>
+            <div class="card-actions"><button class="btn-action btn-block"><i data-lucide="ban" width="13" height="13"></i> Block</button></div>
+          </div>
+          `;
+        }).join('');
+        lucide.createIcons();
+      }
+  
+      function renderCenters() {
+        const centersGrid = document.getElementById('centersGrid');
+        if (!centersGrid) return;
+        const centers = getCenters();
+  
+        centersGrid.innerHTML = centers.map(center => {
+          const status = center.status || 'active';
+          const opAreas = (center.operatingAreas && center.operatingAreas.length > 0) ? center.operatingAreas.join(', ') : 'None';
+          const certs = 0;
+          const joined = '2025-01-01';
+  
+          return `
+          <div class="user-card" data-status="${esc(status)}">
+            <div class="card-top">
+              <div>
+                <div class="td-id">${esc(center.id)}</div>
+                <div class="td-name">${esc(center.name)}</div>
+                <div class="td-email">${center.email ? esc(center.email) + ' • ' : ''}${esc(center.contact)}</div>
+              </div>
+              <div><span class="badge badge-${esc(status)}">${esc(status)}</span></div>
+            </div>
+            <div class="card-stats">
+              <div class="card-stat"><div class="card-stat-label">Areas</div><div class="card-stat-value" style="font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;" title="${esc(opAreas)}">${esc(opAreas)}</div></div>
+              <div class="card-stat"><div class="card-stat-label">Certs</div><div class="card-stat-value">${certs}</div></div>
+              <div class="card-stat"><div class="card-stat-label">Joined</div><div class="card-stat-value">${joined}</div></div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-action ${status === 'active' ? 'btn-block' : 'btn-approve'}" onclick="toggleCenterStatus('${esc(center.id)}')">
+                <i data-lucide="power" width="13" height="13"></i> ${status === 'active' ? 'Inactivate' : 'Activate'}
+              </button>
+            </div>
+          </div>
+          `;
+        }).join('');
+        lucide.createIcons();
+      }
+  
+      window.toggleCenterStatus = function (centerId) {
+        const centers = getCenters();
+        const center = centers.find(c => c.id === centerId);
+        if (center) {
+          center.status = (center.status === 'inactive') ? 'active' : 'inactive';
+          saveCenters(centers);
+          renderCenters();
+          if (getActiveTab() === 'centers') applyPanelFilter('centers', currentFilter);
+        }
+      };
+  
+      window.closeCollectorModal = closeCollectorModal;
+      window.submitCollectorForm = submitCollectorForm;
+      window.closeCenterModal = closeCenterModal;
+      window.submitCenterForm = submitCenterForm;
+  
+      // ---------- notifications popup ----------
+      const notificationBtn = document.getElementById('notificationBtn');
+      const notificationPopup = document.getElementById('notificationPopup');
+      const notificationClose = document.querySelector('.notif-popup-close');
+  
+      if (notificationBtn && notificationPopup) {
+        notificationBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          notificationPopup.classList.toggle('active');
+        });
+        if (notificationClose) {
+          notificationClose.addEventListener('click', () => notificationPopup.classList.remove('active'));
+        }
+        document.addEventListener('click', e => {
+          if (!notificationBtn.contains(e.target) && !notificationPopup.contains(e.target)) {
+            notificationPopup.classList.remove('active');
+          }
+        });
+      }
+  
+      // ---------- profile + logout ----------
+      function initProfile() {
+        const currentUser = JSON.parse(localStorage.getItem('ecorepair_user') || 'null');
+  
+        if (!currentUser || !currentUser.email) {
+          window.location.href = 'Login.html';
+          return;
+        }
+  
+        const profileBtn = document.getElementById('profileBtn');
+        const profilePopup = document.getElementById('profilePopup');
+  
+        if (profileBtn && profilePopup) {
+          profileBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            profilePopup.classList.toggle('active');
+          });
+          document.addEventListener('click', e => {
+            if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
+              profilePopup.classList.remove('active');
+            }
+          });
+        }
+  
+        function initials(name) {
+          return (name || 'User')
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(w => w[0].toUpperCase())
+            .join('') || 'U';
+        }
+  
+        function renderProfile(user) {
+          const ini = initials(user.fullName);
+          if (profileBtn) {
+            profileBtn.textContent = ini;
+            profileBtn.title = user.fullName || '';
+          }
+          const avatar = document.querySelector('.profile-popup .profile-avatar');
+          const name = document.querySelector('.profile-popup .profile-name');
+          const email = document.querySelector('.profile-popup .profile-email');
+          if (avatar) avatar.textContent = ini;
+          if (name) name.textContent = user.fullName || '';
+          if (email) email.textContent = user.email || '';
+        }
+  
+        async function loadProfile() {
+          renderProfile(currentUser);
+          try {
+            const res = await fetch(`${API}/users/profile?email=${encodeURIComponent(currentUser.email)}`);
+            if (res.ok) {
+              const freshUser = await res.json();
+              renderProfile(freshUser);
+              localStorage.setItem('ecorepair_user', JSON.stringify({ ...currentUser, ...freshUser }));
+            }
+          } catch (err) {
+            console.error('Could not refresh profile:', err);
+          }
+        }
+  
+        loadProfile();
+  
+        document.querySelector('.profile-menu-item.logout')?.addEventListener('click', () => {
+          localStorage.removeItem('ecorepair_user');
+          window.location.href = 'Login.html';
+        });
+      }
+  
+      // ---------- init ----------
+      renderCollectors();
+      renderCenters();
+  
+      const startTab = getActiveTab();
+      currentFilter = resetPanelFilter(startTab);
+      applyPanelFilter(startTab, currentFilter);
+      updateHeaderFor(startTab);
+  
+      loadUsers();
+      initProfile();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up -EcoRepair Hub </title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f9fafb;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: white;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  width: 35px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: black;
+}
+
+.nav-links a:hover {
+  color: #10B77F;
+}
+
+.login-btn {
+  background: #10B77F;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+}
+
+/* Layout */
+.container {
+  display: flex;
+  min-height: 90vh;
+}
+
+/* Left Side - Features */
+.features {
+  flex: 1;
+  background: #10B77F;
+  color: white;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.features h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.features ul {
+  list-style: none;
+}
+
+.features li {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+/* Right Side - Form */
+.form-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-box {
+  background: white;
+  padding: 40px;
+  width: 350px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.form-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Inputs */
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  font-size: 14px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #10B77F;
+}
+
+/* Button */
+.btn-green {
+  width: 100%;
+  background: #10B77F;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-green:hover {
+  background: #10B77F;
+}
+
+/* Footer */
+.form-footer {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.form-footer a {
+  color: #10B77F;
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .features {
+    display: none;
+  }
+
+  .nav-links {
+    display: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="logo">
+    <img src="picture/logofirst.png" alt="logo">
+    <h2>EcoRepair Hub</h2>
+  </div>
+
+  <div class="nav-links">
+    <a href="#">Categories</a>
+    <a href="#">How it works</a>
+    <a href="#">Contact</a>
+  </div>
+
+  <a href="login.html"><button class="login-btn">Login</button></a>
+</div>
+
+<!-- Main -->
+<div class="container">
+
+  <!-- Left Side -->
+  <div class="features">
+    <h1>Join Smart Repairing Today ♻️</h1>
+
+    <ul>
+      <li>✔ Request doorstep pickup</li>
+      <li>✔ Track your repairing status</li>
+      <li>✔ Earn reward points</li>
+      <li>✔ Download repairing certificates</li>
+      <li>✔ Get awareness tips</li>
+      <li>✔ Chat with collectors & support</li>
+    </ul>
+  </div>
+
+  <!-- Right Side -->
+  <div class="form-container">
+    <div class="form-box">
+      <h2>Create Account</h2>
+
+      <form id="userform" enctype="multipart/form-data" >
+        <div class="input-group">
+          <label>Full Name</label>
+          
+          <input type="text" id="fullname" name="fullname" placeholder="Enter your fullname" required>
+        </div>
+
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="Enter your Email" required>
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <div class="input-group">
+          <label>Confirm Password</label>
+          <input type="password" name="confirm" placeholder="Enter Confirm password" required>
+        </div>
+        
+        <button type="submit" class="btn-green">Sign Up</button>
+      </form>
+
+    
+      
+
+
+
+
+
+
+
+
+
+
+      <div class="form-footer">
+        Already have an account? <a href="Login.html">Sign In</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoRecycle – Request Pickup</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #10B77F;
+      --green-dark: #10B77F;
+      --green-light: #dcfce7;
+      --navy: #0f172a;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    [data-lucide] {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+    }
+
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      margin-right: 8px;
+    }
+    .nav-brand [data-lucide="recycle"] { color: var(--green); width: 28px; height: 28px; }
+
+    .nav-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+      margin-left: 0;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+    .nav-link.active { background: black; color: var(--white); }
+    .nav-link:not(.active):hover { background: var(--gray-100); color: var(--navy); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .nav-icon-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+    .nav-icon-btn [data-lucide] { opacity: .5; color: var(--navy); }
+    .nav-icon-btn:hover { background: var(--gray-100); }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 16px; height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--white);
+    }
+
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    .avatar-container {
+      position: relative;
+    }
+
+    /* ── PROFILE POPUP ── */
+    .profile-popup {
+      position: absolute;
+      top: 100%;
+      left: -306px;
+      margin-top: 12px;
+      width: 340px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .profile-popup.active {
+      display: flex;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-email {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .profile-stats {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tier-badge-popup {
+      background: var(--navy);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .progress-info {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 99px;
+      width: 63.5%;
+    }
+
+    .profile-menu {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-menu-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .profile-menu-item:hover {
+      background: var(--gray-100);
+    }
+
+    .profile-menu-item [data-lucide] {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .profile-menu-item.logout [data-lucide] {
+      color: #ef4444;
+    }
+
+    .notif-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      width: 280px;
+      display: none;
+      z-index: 100;
+      margin-top: 8px;
+    }
+
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+      color: var(--navy);
+    }
+
+    .notif-item:last-child { border-bottom: none; }
+
+    .notif-all {
+      display: block;
+      padding: 12px 16px;
+      background: var(--gray-50);
+      color: var(--green-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      border-top: 1px solid var(--gray-200);
+      text-align: center;
+    }
+
+    .notif-all:hover { background: var(--gray-100); }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 700; }
+    .page-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .left-col, .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 26px 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .card-title [data-lucide] { color: var(--green); }
+
+    .card-sub {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-bottom: 22px;
+    }
+
+    .item-row {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      display: grid;
+      grid-template-columns: 1fr 140px 1fr auto;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-500);
+      margin-bottom: 8px;
+    }
+
+    .field-input {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      appearance: none;
+      transition: border-color .15s;
+    }
+    .field-input:focus, .select-wrap select:focus, textarea:focus, input[type="date"]:focus { border-color: var(--green); }
+
+    .select-wrap {
+      position: relative;
+    }
+    .select-wrap select {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 0 36px 0 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+      transition: border-color .15s;
+    }
+    .select-wrap .chevron {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .btn-add,
+    .btn-choose {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--navy);
+      cursor: pointer;
+      transition: background .15s;
+      text-decoration: none;
+    }
+    .btn-add:hover,
+    .btn-choose:hover { background: var(--gray-100); }
+
+    .item-remove-button {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 50%;
+      background: none;
+      color: hsla(0, 0%, 0%, 0.74);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .item-remove-button:hover { background: #fecaca; }
+    .item-remove-button [data-lucide] { width: 16px; height: 16px; }
+
+    .upload-zone {
+      border: 2px dashed var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 48px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .upload-zone:hover { border-color: var(--green); background: #f0fdf4; }
+
+    .upload-text { font-size: 14px; color: var(--gray-500); }
+
+    .right-col .card {
+      padding: 22px 24px;
+    }
+
+    .address-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-sm);
+      padding: 11px 14px;
+      font-size: 13px;
+      color: var(--gray-700);
+      margin-top: 12px;
+    }
+
+    input[type="date"] {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 90px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      resize: vertical;
+      transition: border-color .15s;
+    }
+    textarea::placeholder { color: var(--gray-400); }
+
+    .form-field { margin-bottom: 18px; }
+    .form-field:last-child { margin-bottom: 0; }
+
+    .btn-submit,
+    .btn-green {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 15px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      background: var(--green);
+      color: var(--white);
+      text-decoration: none;
+      transition: background .15s;
+    }
+    .btn-submit:hover,
+    .btn-green:hover { background: var(--green-dark); }
+
+    .field-input::-webkit-inner-spin-button,
+    .field-input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--gray-500);
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .modal-body p {
+      font-size: 14px;
+      color: var(--gray-700);
+    }
+
+    .modal-footer {
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-brand">
+      <i data-lucide="recycle"></i>
+      EcoRecycle
+      <span class="nav-badge">User</span>
+    </div>
+  
+    <div class="nav-links">
+      <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+      <a href="user-requests.html" class="nav-link active">My Requests</a>
+      <a href="user-rewards.html" class="nav-link">Rewards</a>
+      <a href="user-certificates.html" class="nav-link">Certificates</a>
+    </div>
+  
+    <div class="nav-actions">
+      <a href="user-messages.html" class="nav-link"><i data-lucide="message-circle"></i></a>
+      <button class="nav-icon-btn" aria-label="Notifications" onclick="toggleNotifDropdown()">
+        <i data-lucide="bell"></i>
+        <span class="notif-dot">2</span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-item">New pickup scheduled for tomorrow at 10 AM</div>
+        <div class="notif-item">Certificate CERT-2026-004 is ready for download</div>
+        <a href="user-notifications.html" class="notif-all">See all notifications</a>
+      </div>
+      <div class="avatar-container">
+        <div class="avatar" id="profileBtn" title="Rahul S">RS</div>
+        
+        <!-- Profile Popup -->
+        <div class="profile-popup" id="profilePopup">
+          <div class="profile-header">
+            <div class="profile-avatar">RS</div>
+            <div class="profile-info">
+              <div class="profile-name">Rahul Sharma</div>
+              <div class="profile-email">rahul@example.com</div>
+            </div>
+          </div>
+  
+          <div class="profile-stats">
+            <div class="stat-row">
+              <div class="stat-label">
+                <i data-lucide="star"></i>
+                Points
+              </div>
+              <div class="stat-value">1,270 pts</div>
+            </div>
+  
+            <div class="stat-row">
+              <div class="stat-label">Tier</div>
+              <div class="tier-badge-popup">
+                <i data-lucide="trending-up"></i>
+                Silver
+              </div>
+            </div>
+  
+            <div>
+              <div class="progress-info">Progress to Gold Tier</div>
+              <div class="progress-bar">
+                <div class="progress-bar-fill"></div>
+              </div>
+              <div class="progress-info" style="margin-top: 6px;">1,270 / 2,000</div>
+            </div>
+  
+            <div class="stat-row">
+              <div class="stat-label">
+                <i data-lucide="gift"></i>
+                Recycled
+              </div>
+              <div class="stat-value">12 this month</div>
+            </div>
+          </div>
+  
+          <div class="profile-menu">
+            <a href="user-rewards.html" class="profile-menu-item">
+              <i data-lucide="star"></i>
+              Rewards
+            </a>
+            <a href="user-settings.html" class="profile-menu-item">
+              <i data-lucide="settings"></i>
+              Settings
+            </a>
+            <button class="profile-menu-item logout">
+              <i data-lucide="log-out"></i>
+              Log out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <form id="request">
+
+    <div class="page">
+  
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1>Request Pickup</h1>
+        <p>Schedule an e-waste collection from your location</p>
+      </div>
+  
+  
+      <div class="page-grid">
+  
+        <!-- ================================================= -->
+        <!-- LEFT COLUMN -->
+        <!-- ================================================= -->
+        <div class="left-col">
+  
+          <!-- E-Waste Items -->
+          <div class="card">
+  
+            <div class="card-title">
+              <i data-lucide="package"></i>
+              E-Waste Items
+            </div>
+  
+            <p class="card-sub">
+              Add the electronic items you want to recycle
+            </p>
+  
+  
+            <div class="item-list" id="itemList">
+  
+              <!-- Item Row -->
+              <div class="item-row">
+  
+                <!-- Category -->
+                <div>
+                  <div class="field-label">
+                    Category
+                  </div>
+  
+                  <div class="select-wrap">
+  
+                    <select name="category[]" required>
+                      <option value="" disabled selected>
+                        Select type
+                      </option>
+  
+                      <option value="Smartphones & Tablets">
+                        Smartphones &amp; Tablets
+                      </option>
+  
+                      <option value="Laptops & Computers">
+                        Laptops &amp; Computers
+                      </option>
+  
+                      <option value="Monitors & Displays">
+                        Monitors &amp; Displays
+                      </option>
+  
+                      <option value="Printers & Scanners">
+                        Printers &amp; Scanners
+                      </option>
+  
+                      <option value="Cables & Chargers">
+                        Cables &amp; Chargers
+                      </option>
+  
+                      <option value="Batteries">
+                        Batteries
+                      </option>
+  
+                      <option value="Small Appliances">
+                        Small Appliances
+                      </option>
+  
+                    </select>
+  
+                    <span class="chevron">
+                      <i data-lucide="chevron-down"></i>
+                    </span>
+  
+                  </div>
+                </div>
+  
+  
+                <!-- Quantity -->
+                <div>
+  
+                  <div class="field-label">
+                    Quantity
+                  </div>
+  
+                  <input
+                    class="field-input"
+                    type="number"
+                    name="quantity[]"
+                    value="1"
+                    min="1"
+                    required
+                  />
+  
+                </div>
+  
+  
+                <!-- Description -->
+                <div>
+  
+                  <div class="field-label">
+                    Description
+                  </div>
+  
+                  <input
+                    class="field-input"
+                    type="text"
+                    name="description[]"
+                    placeholder="e.g. Old iPhone 11"
+                  />
+  
+                </div>
+  
+  
+                <!-- Remove -->
+                <button
+                  class="item-remove-button"
+                  type="button"
+                  aria-label="Remove item"
+                >
+                  <i data-lucide="x"></i>
+                </button>
+  
+              </div>
+  
+            </div>
+  
+  
+            <!-- Add Item -->
+            <button
+              class="btn-add"
+              type="button"
+              id="addItemButton"
+            >
+              <i data-lucide="plus"></i>
+              Add Another Item
+            </button>
+  
+          </div>
+  
+  
+  
+          <!-- ================================================= -->
+          <!-- PHOTOS -->
+          <!-- ================================================= -->
+  
+          <div class="card">
+  
+            <div class="card-title">
+              <i data-lucide="image-plus"></i>
+              Photos (Optional)
+            </div>
+  
+            <p class="card-sub">
+              Upload photos of your e-waste for better assessment
+            </p>
+  
+  
+            <div
+              class="upload-zone"
+              id="uploadZone"
+            >
+  
+              <i
+                data-lucide="upload-cloud"
+                width="40"
+                height="40"
+              ></i>
+  
+  
+              <p
+                class="upload-text"
+                id="uploadText"
+              >
+                Drag &amp; drop or click to upload
+              </p>
+  
+  
+              <button
+                class="btn-choose"
+                type="button"
+                id="chooseFilesButton"
+              >
+                Choose Files
+              </button>
+  
+  
+              <input
+                id="fileInput"
+                name="photos"
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+              />
+  
+            </div>
+  
+          </div>
+  
+        </div>
+  
+  
+  
+        <!-- ================================================= -->
+        <!-- RIGHT COLUMN -->
+        <!-- ================================================= -->
+  
+        <div class="right-col">
+  
+  
+          <!-- ================================================= -->
+          <!-- PICKUP LOCATION -->
+          <!-- ================================================= -->
+  
+          <div class="card">
+  
+            <div class="card-title">
+              <i data-lucide="map-pin"></i>
+              Pickup Location
+            </div>
+  
+  
+            <div
+              class="form-field"
+              style="margin-top:18px;"
+            >
+  
+              <div class="field-label">
+                Select Address
+              </div>
+  
+  
+              <div class="select-wrap">
+  
+                <select
+                  name="address"
+                  id="address"
+                  required
+                >
+  
+                  <option
+                    value="123 Green Lane, Eco City"
+                    selected
+                  >
+                    Home (Default) — 123 Green Lane, Eco City
+                  </option>
+  
+                  <option
+                    value="456 Recycle Road, Eco City"
+                  >
+                    Work — 456 Recycle Road, Eco City
+                  </option>
+  
+                  <option value="new">
+                    + Add New Address
+                  </option>
+  
+                </select>
+  
+  
+                <span class="chevron">
+                  <i data-lucide="chevron-down"></i>
+                </span>
+  
+              </div>
+  
+            </div>
+  
+  
+            <!-- Address Display -->
+            <div class="address-display">
+  
+              <i data-lucide="map-pin"></i>
+  
+              <span id="addressDisplayText">
+                123 Green Lane, Eco City
+              </span>
+  
+            </div>
+  
+          </div>
+  
+  
+  
+          <!-- ================================================= -->
+          <!-- SCHEDULE -->
+          <!-- ================================================= -->
+  
+          <div class="card">
+  
+            <div class="card-title">
+              <i data-lucide="calendar"></i>
+              Schedule
+            </div>
+  
+  
+            <!-- Date -->
+            <div
+              class="form-field"
+              style="margin-top:18px;"
+            >
+  
+              <div class="field-label">
+                Preferred Date
+              </div>
+  
+              <input
+                type="date"
+                name="date"
+                id="pickupDate"
+                required
+              />
+  
+            </div>
+  
+  
+            <!-- Time -->
+            <div class="form-field">
+  
+              <div class="field-label">
+                Preferred Time
+              </div>
+  
+  
+              <div class="select-wrap">
+  
+                <select
+                  name="time"
+                  id="pickupTime"
+                  required
+                >
+  
+                  <option
+                    value=""
+                    disabled
+                    selected
+                  >
+                    Select time slot
+                  </option>
+  
+                  <option value="Morning (8 AM – 12 PM)">
+                    Morning (8 AM – 12 PM)
+                  </option>
+  
+                  <option value="Afternoon (12 PM – 4 PM)">
+                    Afternoon (12 PM – 4 PM)
+                  </option>
+  
+                  <option value="Evening (4 PM – 7 PM)">
+                    Evening (4 PM – 7 PM)
+                  </option>
+  
+                </select>
+  
+  
+                <span class="chevron">
+                  <i data-lucide="chevron-down"></i>
+                </span>
+  
+              </div>
+  
+            </div>
+  
+  
+            <!-- Notes -->
+            <div class="form-field">
+  
+              <div class="field-label">
+                Additional Notes
+              </div>
+  
+              <textarea
+                name="notes"
+                id="notes"
+                placeholder="Any special instructions..."
+                rows="4"
+              ></textarea>
+  
+            </div>
+  
+          </div>
+  
+  
+  
+          <!-- ================================================= -->
+          <!-- SUBMIT -->
+          <!-- ================================================= -->
+  
+          <button
+            id="submitRequestButton"
+            class="btn-green"
+            type="submit"
+          >
+  
+            <i data-lucide="send"></i>
+  
+            Submit Request
+  
+          </button>
+  
+        </div>
+  
+      </div>
+  
+    </div>
+  
+  </form>
+  
+  
+  
+  <script>
+  
+document.addEventListener("DOMContentLoaded", function () {
+
+  lucide.createIcons();
+
+  const API = "http://127.0.0.1:8082/api";
+  const currentUser = JSON.parse(localStorage.getItem("ecorepair_user") || "null");
+
+  if (!currentUser || !currentUser.email) {
+    window.location.href = "Login.html";
+    return;
+  }
+
+  const profileBtn = document.getElementById("profileBtn");
+  const profilePopup = document.getElementById("profilePopup");
+
+  // ===== Toggle popup — set up ONCE, outside renderProfile =====
+  if (profileBtn && profilePopup) {
+    profileBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      profilePopup.classList.toggle("active");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
+        profilePopup.classList.remove("active");
+      }
+    });
+  } else {
+    console.error("profileBtn or profilePopup not found on this page.");
+  }
+
+  function initials(name) {
+    return (name || "User")
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(w => w[0].toUpperCase())
+      .join("") || "U";
+  }
+
+  // ===== renderProfile ONLY updates text — no listeners in here =====
+  function renderProfile(user) {
+    const ini = initials(user.fullName);
+
+    if (profileBtn) {
+      profileBtn.textContent = ini;
+      profileBtn.title = user.fullName;
+    }
+
+    document.querySelector(".profile-popup .profile-avatar").textContent = ini;
+    document.querySelector(".profile-popup .profile-name").textContent = user.fullName;
+    document.querySelector(".profile-popup .profile-email").textContent = user.email;
+  }
+
+  async function loadProfile() {
+    renderProfile(currentUser); // instant paint
+
+    try {
+      const res = await fetch(`${API}/users/profile?email=${encodeURIComponent(currentUser.email)}`);
+      if (res.ok) {
+        const freshUser = await res.json();
+        renderProfile(freshUser); // overwrite with fresh data — text only, no re-attaching listeners
+        localStorage.setItem("ecorepair_user", JSON.stringify({ ...currentUser, ...freshUser }));
+      }
+    } catch (err) {
+      console.error("Could not refresh profile:", err);
+    }
+  }
+
+  loadProfile();
+
+  // Logout
+  document.querySelector(".profile-menu-item.logout")?.addEventListener("click", () => {
+    localStorage.removeItem("ecorepair_user");
+    window.location.href = "Login.html";
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+      const form = document.getElementById("request");
+      const itemList = document.getElementById("itemList");
+      const addItemButton = document.getElementById("addItemButton");
+  
+      // ===== Add / remove item rows =====
+      addItemButton?.addEventListener("click", () => {
+        if (!itemList) return;
+  
+        const prototypeRow = itemList.querySelector(".item-row");
+        if (!prototypeRow) return;
+  
+        const clone = prototypeRow.cloneNode(true);
+        const select = clone.querySelector('select[name="category[]"]');
+        const quantity = clone.querySelector('input[name="quantity[]"]');
+        const description = clone.querySelector('input[name="description[]"]');
+  
+        if (select) select.selectedIndex = 0;
+        if (quantity) quantity.value = "1";
+        if (description) description.value = "";
+  
+        itemList.appendChild(clone);
+      });
+  
+      itemList?.addEventListener("click", (e) => {
+        if (e.target.closest(".item-remove-button")) {
+          const row = e.target.closest(".item-row");
+          if (itemList.children.length > 1) {
+            row.remove();
+          }
+        }
+      });
+  
+      // ===== Upload zone =====
+      const uploadZone = document.getElementById("uploadZone");
+      const chooseFilesButton = document.getElementById("chooseFilesButton");
+      const fileInput = document.getElementById("fileInput");
+      const uploadText = document.getElementById("uploadText");
+  
+      const updateUploadText = () => {
+        if (!fileInput) return;
+        if (fileInput.files.length === 0) {
+          uploadText.textContent = "Drag & drop or click to upload";
+        } else {
+          const names = Array.from(fileInput.files).map((file) => file.name);
+          uploadText.textContent = `${names.length} file${names.length === 1 ? "" : "s"} selected`;
+        }
+      };
+  
+      chooseFilesButton?.addEventListener("click", () => fileInput?.click());
+      uploadZone?.addEventListener("click", () => fileInput?.click());
+      fileInput?.addEventListener("change", updateUploadText);
+  
+      // ===== Address preview =====
+      const addressSelect = document.getElementById("address");
+      const addressDisplayText = document.getElementById("addressDisplayText");
+  
+      addressSelect?.addEventListener("change", () => {
+        if (!addressDisplayText) return;
+        addressDisplayText.textContent = addressSelect.value === "new"
+          ? "Add a new address to continue"
+          : addressSelect.value;
+      });
+  
+      // ===== Modal helper, falls back to alert() if modal markup isn't on the page =====
+      function showModal(title, message) {
+        const overlay = document.getElementById("modalOverlay");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalMessage = document.getElementById("modalMessage");
+  
+        if (overlay && modalTitle && modalMessage) {
+          modalTitle.textContent = title;
+          modalMessage.textContent = message;
+          overlay.style.display = "flex";
+        } else {
+          alert(`${title}: ${message}`);
+        }
+      }
+  
+      document.getElementById("modalClose")?.addEventListener("click", () => {
+        document.getElementById("modalOverlay").style.display = "none";
+      });
+      document.getElementById("modalOk")?.addEventListener("click", () => {
+        document.getElementById("modalOverlay").style.display = "none";
+      });
+  
+      // ===== Submit to database =====
+      const submitRequestButton = document.getElementById("submitRequestButton");
+  
+      form?.addEventListener("submit", async function (e) {
+        e.preventDefault();
+  
+        const items = [];
+        let errorMsg = "";
+  
+        itemList.querySelectorAll(".item-row").forEach((row) => {
+          const category = row.querySelector('select[name="category[]"]').value;
+          const quantity = parseInt(row.querySelector('input[name="quantity[]"]').value, 10);
+          const description = row.querySelector('input[name="description[]"]').value.trim();
+  
+          if (!category) errorMsg = "Please select a category for all items.";
+          else if (!quantity || quantity < 1) errorMsg = "Quantity must be at least 1 for all items.";
+          else items.push({ category, quantity, description });
+        });
+  
+        const address = addressSelect.value;
+        const date = document.getElementById("pickupDate").value;
+        const time = document.getElementById("pickupTime").value;
+        const notes = document.getElementById("notes").value.trim();
+  
+        if (!errorMsg && address === "new") errorMsg = "Please add and select a real address.";
+        if (!errorMsg && !date) errorMsg = "Please select a preferred date.";
+        if (!errorMsg && !time) errorMsg = "Please select a preferred time slot.";
+        if (!errorMsg && items.length === 0) errorMsg = "Add at least one item.";
+  
+        if (errorMsg) {
+          showModal("Error", errorMsg);
+          return;
+        }
+  
+        submitRequestButton.disabled = true;
+  
+        try {
+          const res = await fetch(`${API}/requests`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userEmail: currentUser.email, address, date, time, notes, items })
+          });
+  
+          const result = await res.json().catch(() => ({}));
+  
+          if (res.ok) {
+            showModal("Success", `Your request ${result.requestCode} has been submitted successfully!`);
+            form.reset();
+  
+            const rows = itemList.querySelectorAll(".item-row");
+            rows.forEach((row, i) => { if (i > 0) row.remove(); });
+            if (addressDisplayText) addressDisplayText.textContent = addressSelect.options[0].value;
+            updateUploadText();
+          } else {
+            showModal("Error", result.message || "Could not submit your request.");
+          }
+        } catch (err) {
+          console.error(err);
+          showModal("Error", "Could not connect to the server.");
+        } finally {
+          submitRequestButton.disabled = false;
+        }
+      });
+  
+    });
+  </script>
+  </body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoRepair Hub</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial, sans-serif;
+  background:#f7f7f7;
+  color:#222;
+}
+
+a{
+  text-decoration:none;
+}
+
+/* MAIN CONTAINER */
+.landing-page{
+  width:100%;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar{
+  width:100%;
+  height:80px;
+  background:#fff;
+  border-bottom:1px solid #e5e5e5;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:0 80px;
+
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+
+/* LOGO */
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo img{
+  width:42px;
+  height:42px;
+  background:#10b77f;
+  padding:6px;
+  border-radius:10px;
+}
+
+.logo span{
+  font-size:22px;
+  font-weight:700;
+  color:#111;
+}
+
+/* NAV LINKS */
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:28px;
+}
+
+.nav-links a{
+  color:#333;
+  font-size:16px;
+  font-weight:500;
+  transition:0.3s;
+}
+
+.nav-links a:hover{
+  color:#10b77f;
+}
+
+/* ADMIN BUTTON */
+.admin-btn{
+  background:#111;
+  color:#fff !important;
+  padding:10px 18px;
+  border-radius:8px;
+}
+
+/* AUTH */
+.auth{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.login{
+  padding:10px 18px;
+  border:1px solid #10b77f;
+  background:#fff;
+  color:#10b77f;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:15px;
+  transition:0.3s;
+}
+
+.login:hover{
+  background:#10b77f;
+  color:#fff;
+}
+
+.signup{
+  padding:10px 18px;
+  border:none;
+  background:#10b77f;
+  color:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:15px;
+  transition:0.3s;
+}
+
+.signup:hover{
+  background:#0e9e6e;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:80px;
+  gap:40px;
+  background:#fff;
+}
+
+.hero-text{
+  max-width:600px;
+}
+
+.hero-text h1{
+  font-size:54px;
+  line-height:1.2;
+  margin-bottom:20px;
+}
+
+.hero-text span{
+  color:#10b77f;
+}
+
+.hero-text p{
+  font-size:18px;
+  color:#555;
+  margin-bottom:30px;
+}
+
+.hero-btn{
+  padding:14px 28px;
+  border:none;
+  background:#10b77f;
+  color:#fff;
+  font-size:16px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.hero img{
+  width:500px;
+  max-width:100%;
+}
+
+/* ================= SECTION ================= */
+
+.section{
+  text-align:center;
+  padding:70px 20px 30px;
+}
+
+.section h2{
+  font-size:36px;
+  margin-bottom:10px;
+}
+
+.section p{
+  color:#666;
+}
+
+/* ================= CARDS ================= */
+
+.categories{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:25px;
+  padding:20px 60px 80px;
+}
+
+.card{
+  width:250px;
+  background:#fff;
+  padding:25px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+.card img{
+  width:60px;
+  margin-bottom:15px;
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+/* ================= STEPS ================= */
+
+.steps{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:30px;
+  padding:20px 40px 80px;
+}
+
+.step{
+  width:240px;
+  background:#fff;
+  padding:25px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.step img{
+  width:70px;
+  margin-bottom:15px;
+}
+
+.step h3{
+  margin-bottom:10px;
+}
+
+/* ================= CONTACT ================= */
+
+.contact{
+  display:flex;
+  justify-content:space-between;
+  gap:40px;
+  padding:80px;
+  background:#fff;
+}
+
+.contact-info{
+  width:40%;
+}
+
+.contact-info h2{
+  margin-bottom:20px;
+}
+
+.contact-info p{
+  margin-bottom:10px;
+  color:#555;
+}
+
+.contact form{
+  width:60%;
+}
+
+.contact input,
+.contact textarea{
+  width:100%;
+  padding:14px;
+  margin-bottom:15px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  outline:none;
+}
+
+.contact textarea{
+  height:120px;
+  resize:none;
+}
+
+.contact button{
+  background:#10b77f;
+  color:#fff;
+  border:none;
+  padding:14px 22px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+  background:#111;
+  color:#fff;
+  padding:25px 80px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:992px){
+
+  .navbar{
+    padding:20px;
+    flex-direction:column;
+    height:auto;
+    gap:20px;
+  }
+
+  .hero{
+    flex-direction:column;
+    text-align:center;
+    padding:60px 20px;
+  }
+
+  .contact{
+    flex-direction:column;
+    padding:50px 20px;
+  }
+
+  .contact-info,
+  .contact form{
+    width:100%;
+  }
+
+  .footer{
+    flex-direction:column;
+    gap:10px;
+    text-align:center;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="landing-page">
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+
+    <!-- LOGO -->
+    <div class="logo">
+      <img src="picture/logofirst.png" alt="logo">
+      <span>EcoRepair Hub</span>
+    </div>
+
+    <!-- NAV LINKS -->
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#categories">Categories</a>
+      <a href="#works">How It Works</a>
+      <a href="#contact">Contact</a>
+
+    
+    </div>
+
+    <!-- AUTH -->
+    <div class="auth">
+      <a href="Login.html">
+        <button class="login">Log In</button>
+      </a>
+
+      <a href="signup.html">
+        <button class="signup">Sign Up</button>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+
+    <div class="hero-text">
+      <h1>
+        Responsible E-Waste
+        <br>
+        <span>Repairing</span> Made Simple
+      </h1>
+
+      <p>
+        Schedule doorstep pickups, track your recycling
+        impact, and earn rewards.
+      </p>
+
+      <a class="hero-btn" href="Login.html" >
+        Get Started
+      </a>
+    </div>
+
+    <img src="picture/image.png">
+
+  </div>
+
+  <!-- CATEGORY -->
+  <div class="section" id="categories">
+    <h2>Repairing Categories</h2>
+    <p>We accept a wide range of electronic waste.</p>
+  </div>
+
+  <div class="categories">
+
+    <div class="card">
+      <img src="picture/Group.png">
+      <h3>Smartphones</h3>
+      <p>Phones, tablets</p>
+    </div>
+
+    <div class="card">
+      <img src="picture/image1.png">
+      <h3>Laptops</h3>
+      <p>Notebooks, ultrabooks</p>
+    </div>
+
+    <div class="card">
+      <img src="picture/logo2.png">
+      <h3>Battery</h3>
+      <p>Li-ion, lead-acid, NiMH</p>
+    </div>
+
+    <div class="card">
+      <img src="picture/logo1.png">
+      <h3>Monitors</h3>
+      <p>LCD, LED, CRT displays</p>
+    </div>
+
+    <div class="card">
+      <img src="picture/Group 1.png">
+      <h3>Printers</h3>
+      <p>Inkjet, laser, scanners</p>
+    </div>
+
+    <div class="card">
+      <img src="picture/comp.png">
+      <h3>Components</h3>
+      <p>PCBs, chips, processors</p>
+    </div>
+
+    <div class="card">
+      <img src="picture/charger.png">
+      <h3>Storage</h3>
+      <p>HDDs, SSDs, USB drives</p>
+    </div>
+
+    <div class="card">
+      <img src="picture/cable.png">
+      <h3>Cables & Chargers</h3>
+      <p>Power adapters, cables</p>
+    </div>
+
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section" id="works">
+    <h2>How It Works</h2>
+  </div>
+
+  <div class="steps">
+
+    <div class="step">
+      <img src="picture/logo4.png">
+      <h3>Request Pickup</h3>
+      <p>Select your e-waste category and preferred time slot.</p>
+    </div>
+
+    <div class="step">
+      <img src="picture/logo3.png">
+      <h3>Collector Arrives</h3>
+      <p>A verified collector picks up your items safely.</p>
+    </div>
+
+    <div class="step">
+      <img src="picture/logoright.png">
+      <h3>Safe Recycling</h3>
+      <p>Items are recycled at certified repairing centers.</p>
+    </div>
+
+    <div class="step">
+      <img src="picture/logos.png">
+      <h3>Earn Rewards</h3>
+      <p>Receive Reward points and Repairing certificates.</p>
+    </div>
+
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact" id="contact">
+
+    <div class="contact-info">
+      <h2>Get In Touch</h2>
+      <p>support@ewasterecycle.com</p>
+      <p>+880 1234-456790</p>
+    </div>
+
+    <form id="feedback" >
+
+      <input 
+        type="text" 
+        name="name"
+        placeholder="Your name"
+        required
+      >
+    
+      <input 
+        type="email" 
+        name="email"
+        placeholder="Email"
+        required
+      >
+    
+      <input 
+        type="text" 
+        name="subject"
+        placeholder="Subject"
+        required
+      >
+    
+      <textarea 
+        name="message"
+        placeholder="Message"
+        required
+      ></textarea>
+    
+      <button type="submit">
+        Send Message
+      </button>
+    
+    </form>
+
+
+
+
+
+
+
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div>E-Waste Recycle</div>
+    <div>© 2026 All Rights Reserved</div>
+  </div>
+
+</div>
+
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("feedback");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const payload = {
+      name: form.elements["name"].value.trim(),
+      email: form.elements["email"].value.trim(),
+      subject: form.elements["subject"].value.trim(),
+      message: form.elements["message"].value.trim()
+    };
+
+    const btn = form.querySelector("button[type='submit']");
+    btn.disabled = true;
+
+    try {
+      const response = await fetch("http://127.0.0.1:8082/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        alert(result.message || "Message sent!");
+        form.reset();
+      } else {
+        alert(result.message || "Could not send your message.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to the server.");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

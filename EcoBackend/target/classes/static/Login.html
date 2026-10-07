@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - E-Waste Recycle</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f9fafb;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: white;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo img {
+  width: 35px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: black;
+}
+
+.nav-links a:hover {
+  color: #10B77F;
+}
+
+.signup-btn {
+  background: #10B77F;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Layout */
+.container {
+  display: flex;
+  min-height: 90vh;
+}
+
+/* Left Side */
+.features {
+  flex: 1;
+  background: #10B77F;
+  color: white;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.features h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.features ul {
+  list-style: none;
+}
+
+.features li {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+/* Right Side */
+.form-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-box {
+  background: white;
+  padding: 40px;
+  width: 350px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.form-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Inputs */
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  font-size: 14px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #10b77f;
+}
+
+/* Button */
+.btn-green {
+  width: 100%;
+  background: #10B77F;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-green:hover {
+  background: #10B77F;
+}
+
+/* Footer */
+.form-footer {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.form-footer a {
+  color: #10B77F;
+  text-decoration: none;
+}
+
+.form-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Extra */
+.forgot {
+  text-align: right;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.forgot a {
+  color: #10B77F;
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .features {
+    display: none;
+  }
+
+  .nav-links {
+    display: none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="logo">
+    <img src="picture/logofirst.png" alt="logo">
+    <h2>EcoRepair Hub</h2>
+  </div>
+
+  <div class="nav-links">
+    <a href="#">Categories</a>
+    <a href="#">How it works</a>
+    <a href="#">Contact</a>
+  </div>
+
+  <a href="signup.html"><button class="signup-btn">Sign up</button> </a>
+</div>
+
+<!-- Main -->
+<div class="container">
+
+  <!-- Left Side -->
+  <div class="features">
+    <h1>Welcome Back 👋</h1>
+
+    <ul>
+      <li>✔ Track your pickups in real-time</li>
+      <li>✔ View reward points & history</li>
+      <li>✔ Download recycling certificates</li>
+      <li>✔ Chat with collectors & support</li>
+      <li>✔ Stay updated with awareness tips</li>
+    </ul>
+  </div>
+
+  <!-- Right Side -->
+  <div class="form-container">
+    <div class="form-box">
+      <h2>Login</h2>
+
+      <form id="logform" >
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" name="email" required>
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" name="password" required>
+        </div>
+
+        <div class="forgot">
+          <a href="#">Forgot Password?</a>
+        </div>
+
+        <button class="btn-green" type="submit">Login</button>
+      </form>
+
+      <div class="form-footer">
+        Don't have an account? <a href="signup.html">Sign up</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="login.js"></script>
+</body>
+</html>

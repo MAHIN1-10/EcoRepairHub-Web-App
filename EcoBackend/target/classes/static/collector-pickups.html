@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoRecycle — Pickups</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="collector-state.js"></script>
+
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --green: #10B77F;
+      --green-dark: #10B77F;
+      --green-light: #dcfce7;
+      --navy: #0f172a;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-500: #64748b;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .07), 0 1px 2px rgba(0, 0, 0, .05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --teal: #0d9488;
+      --teal-light: #f0fdfa;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      min-height: 100vh;
+      font-size: 16px;
+    }
+
+    [data-lucide] {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 28px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      margin-right: 8px;
+      text-decoration: none;
+    }
+
+    .nav-brand [data-lucide="recycle"] {
+      color: var(--green);
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+      margin-left: 0;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+
+    .nav-link.active {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .nav-link:not(.active):hover {
+      background: var(--gray-100);
+      color: var(--navy);
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .icon-btn [data-lucide] {
+      opacity: .5;
+      color: var(--navy);
+    }
+
+    .icon-btn:hover {
+      background: var(--gray-100);
+    }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--white);
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* ─── MAIN ─── */
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .page-sub {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* ─── STAT CARDS ─── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow);
+      width: 100%;
+    }
+
+    .stat-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--green-dark);
+    }
+
+    .stat-icon-wrap [data-lucide] {
+      width: 24px;
+      height: 24px;
+    }
+
+    .stat-val {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* ─── PICKUP CARDS ─── */
+    .pickups {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-actions a {
+      text-decoration: none;
+    }
+
+    .card-id-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .card-id {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+
+    /* BADGES */
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 0.2px;
+    }
+
+    .badge-pickedup {
+      background: var(--teal-light);
+      color: var(--teal);
+    }
+
+    .badge-transit {
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+
+    .badge-delivered {
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+
+    .badge-otp {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .badge-otp [data-lucide] {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* INFO ROWS */
+    .info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+      margin-top: 12px;
+    }
+
+    .info-row {
+      font-size: 14px;
+      color: var(--navy);
+      line-height: 1.5;
+    }
+
+    .info-row span {
+      color: var(--gray-500);
+    }
+
+    /* STEPPER */
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-top: 16px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .step-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-circle.done {
+      background: var(--green);
+      color: var(--white);
+    }
+
+    .step-circle.active {
+      background: var(--green);
+      color: var(--white);
+    }
+
+    .step-circle.idle {
+      background: var(--gray-200);
+      color: var(--gray-500);
+    }
+
+    .step-circle [data-lucide] {
+      width: 14px;
+      height: 14px;
+    }
+
+    .step-label {
+      white-space: nowrap;
+    }
+
+    .step-label.done-text {
+      color: var(--navy);
+    }
+
+    .step-label.active-text {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .step-label.idle-text {
+      color: var(--gray-500);
+    }
+
+    .step-line {
+      height: 2px;
+      width: 48px;
+      border-radius: 2px;
+      margin: 0 8px;
+    }
+
+    .step-line.done-line {
+      background: var(--green);
+    }
+
+    .step-line.idle-line {
+      background: var(--gray-200);
+    }
+
+    /* BUTTONS */
+    .btn {
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 11px 18px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .btn [data-lucide] {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--gray-300);
+      color: var(--navy);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--green);
+      color: var(--green);
+      background: var(--green-light);
+    }
+
+    .btn-green {
+      background: var(--green);
+      color: var(--white);
+    }
+
+    .btn-green:hover {
+      background: var(--green-dark);
+    }
+
+    @media (max-width: 640px) {
+      .stat-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .step-line {
+        width: 24px;
+      }
+    }
+
+    .notif-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      width: 280px;
+      display: none;
+      z-index: 100;
+      margin-top: 8px;
+    }
+
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+      color: var(--navy);
+    }
+
+    .notif-item:last-child {
+      border-bottom: none;
+    }
+
+    .notif-all {
+      display: block;
+      padding: 12px 16px;
+      background: var(--gray-50);
+      color: var(--green);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      border-top: 1px solid var(--gray-200);
+      text-align: center;
+      transition: background .15s;
+    }
+
+    .notif-all:hover {
+      background: var(--gray-100);
+    }
+
+    /* ── PROFILE POPUP ── */
+    .avatar-container {
+      position: relative;
+    }
+
+    .profile-popup {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 12px;
+      width: 340px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .profile-popup.active {
+      display: flex;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-email {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .profile-stats {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tier-badge-popup {
+      background: var(--green);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .profile-menu {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-menu-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .profile-menu-item:hover {
+      background: var(--gray-100);
+    }
+
+    .profile-menu-item [data-lucide] {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .profile-menu-item.logout [data-lucide] {
+      color: #ef4444;
+    }
+
+    /* OTP MODAL */
+    .otp-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .otp-modal-overlay.active {
+      display: flex;
+    }
+
+    .otp-modal {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+      text-align: center;
+    }
+
+    .otp-modal-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--green-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      color: var(--green);
+    }
+
+    .otp-modal h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .otp-modal p {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-bottom: 24px;
+    }
+
+    .otp-inputs {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .otp-input {
+      width: 52px;
+      height: 58px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      color: var(--navy);
+      background: var(--gray-100);
+      outline: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .otp-input:focus {
+      border-color: var(--green);
+      background: var(--white);
+    }
+
+    .otp-input.error {
+      border-color: #ef4444 !important;
+      background: #fee2e2 !important;
+    }
+
+    .otp-error {
+      display: none;
+      font-size: 13px;
+      color: #ef4444;
+      margin-top: -16px;
+      margin-bottom: 16px;
+    }
+
+    .otp-error.visible {
+      display: block;
+    }
+
+    .otp-btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .otp-btn-row .btn {
+      flex: 1;
+    }
+
+    .btn-green-solid {
+      background: var(--green);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 18px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-green-solid:hover {
+      background: #087c55;
+    }
+  </style>
+<style>.notif-dot.is-empty{display:none!important}</style>
+</head>
+
+<body>
+
+  <nav>
+    <a class="nav-brand" href="collector-dashboard.html">
+      <i data-lucide="recycle"></i>
+      <span>EcoRecycle</span>
+      <span class="nav-badge">Collector</span>
+    </a>
+
+    <div class="nav-links">
+      <a class="nav-link" href="collector-dashboard.html">Dashboard</a>
+      <a class="nav-link" href="collector-assignments.html">Assignments</a>
+      <a class="nav-link active" href="collector-pickups.html">Pickups</a>
+    </div>
+
+    <div class="nav-right">
+      <a href= "collector-messages.html"class="icon-btn" aria-label="Messages">
+        <i data-lucide="message-circle"></i>
+      </a>
+      <button type="button" class="icon-btn" aria-label="Notifications" onclick="toggleNotifDropdown()">
+        <i data-lucide="bell"></i>
+        <span class="notif-dot is-empty">0</span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown"><div class="notif-item" style="color:#6b7280;">Loading…</div><a href="collector-notifications.html" class="notif-all">See all notifications</a></div>
+      <div class="avatar-container">
+        <div class="avatar" id="profileBtn" >
+
+          
+          U
+        
+        </div>
+
+
+
+
+
+
+
+        </div>
+
+        <!-- Profile Popup -->
+        <div class="profile-popup" id="profilePopup">
+          <div class="profile-header">
+            <div class="profile-avatar">
+              U
+            </div>
+            <div class="profile-info">
+              <div class="profile-name">User</div>
+              <div class="profile-email"></div>
+            </div>
+          </div>
+
+          <div class="profile-stats">
+            <div class="stat-row">
+              <div class="stat-label">
+                <i data-lucide="truck"></i>
+                Total Pickups
+              </div>
+              <div class="stat-value">342</div>
+            </div>
+          </div>
+
+          <div class="profile-menu">
+            <a href="collector-settings.html" class="profile-menu-item">
+              <i data-lucide="settings"></i>
+              Settings
+            </a>
+            <a class="profile-menu-item logout" href="Login.html">
+              <i data-lucide="log-out"></i>
+              Log out
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main>
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Pickups</h1>
+        <p class="page-sub">Track pickups, verify with OTP, and deliver to recycling centers</p>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-icon-wrap">
+          <i data-lucide="package-open"></i>
+        </div>
+        <div>
+          <div class="stat-val">–</div>
+          <div class="stat-label">Picked Up</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-wrap">
+          <i data-lucide="truck"></i>
+        </div>
+        <div>
+          <div class="stat-val">–</div>
+          <div class="stat-label">In Transit</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-wrap">
+          <i data-lucide="building-2"></i>
+        </div>
+        <div>
+          <div class="stat-val">–</div>
+          <div class="stat-label">Delivered</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PICKUP CARDS -->
+    <div class="pickups" id="pickupsContainer"><p class="loading-note" style="font-size:13px;color:#6b7280;padding:10px 0;">Loading pickups…</p></div><!-- /pickups -->
+
+    <!-- OTP VERIFICATION MODAL -->
+    <div class="otp-modal-overlay" id="otpModal">
+      <div class="otp-modal">
+        <div class="otp-modal-icon">
+          <i data-lucide="shield-check" style="width:28px;height:28px;"></i>
+        </div>
+        <h3>Verify OTP</h3>
+        <p>We sent a 4-digit OTP to the user. Ask them for it to confirm pickup.</p>
+        <div class="otp-inputs">
+          <input class="otp-input" id="otp1" maxlength="1" type="text" inputmode="numeric" />
+          <input class="otp-input" id="otp2" maxlength="1" type="text" inputmode="numeric" />
+          <input class="otp-input" id="otp3" maxlength="1" type="text" inputmode="numeric" />
+          <input class="otp-input" id="otp4" maxlength="1" type="text" inputmode="numeric" />
+        </div>
+        <div class="otp-error" id="otpError">Incorrect OTP. Please try again.</div>
+        <div class="otp-btn-row">
+          <button class="btn btn-secondary" onclick="closeOtpModal()">Cancel</button>
+          <button class="btn-green-solid" onclick="submitOTP()">Verify</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const profileBtn = document.getElementById('profileBtn');
+    const profilePopup = document.getElementById('profilePopup');
+
+    if (profileBtn && profilePopup) {
+      profileBtn.addEventListener('click', () => {
+        profilePopup.classList.toggle('active');
+      });
+    }
+
+    function toggleNotifDropdown() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.addEventListener('click', function (event) {
+      if (!event.target.closest('.nav-icon-btn') && !event.target.closest('.icon-btn') && !event.target.closest('#notifDropdown')) {
+        const nd = document.getElementById('notifDropdown');
+        if (nd) nd.style.display = 'none';
+      }
+
+      if (profileBtn && profilePopup && !profileBtn.contains(event.target) && !profilePopup.contains(event.target)) {
+        profilePopup.classList.remove('active');
+      }
+    });
+
+    lucide.createIcons();
+
+    async function loadPickups() {
+      await refreshAssignments();
+      renderPickups();
+    }
+
+    async function completePickup(id) {
+      await updateAssignmentStatus(id, 'delivered');
+      renderPickups();
+    }
+
+    // OTP Modal
+    let otpTargetId = null;
+    async function verifyOTP(id) {
+      // The server generates the OTP and sends it to the customer's notifications
+      const sent = await requestPickupOtp(id);
+      if (!sent.ok) {
+        alert(sent.message || 'Could not send the OTP to the customer.');
+        return;
+      }
+
+      otpTargetId = id;
+      // Clear inputs
+      ['otp1', 'otp2', 'otp3', 'otp4'].forEach(i => { document.getElementById(i).value = ''; document.getElementById(i).classList.remove('error'); });
+      const err = document.getElementById('otpError');
+      err.textContent = 'Incorrect OTP. Please try again.';
+      err.classList.remove('visible');
+      document.getElementById('otpModal').classList.add('active');
+      setTimeout(() => document.getElementById('otp1').focus(), 100);
+      lucide.createIcons();
+    }
+
+    function closeOtpModal() {
+      document.getElementById('otpModal').classList.remove('active');
+      otpTargetId = null;
+    }
+
+    async function submitOTP() {
+      const entered = ['otp1', 'otp2', 'otp3', 'otp4'].map(i => document.getElementById(i).value).join('');
+      const err = document.getElementById('otpError');
+
+      if (entered.length < 4) {
+        err.textContent = 'Please enter all 4 digits.';
+        err.classList.add('visible');
+        return;
+      }
+
+      const result = await verifyPickupOtp(otpTargetId, entered);
+      if (result.ok) {
+        closeOtpModal();
+        renderPickups();
+      } else {
+        ['otp1', 'otp2', 'otp3', 'otp4'].forEach(i => document.getElementById(i).classList.add('error'));
+        err.textContent = result.message || 'Incorrect OTP. Please try again.';
+        err.classList.add('visible');
+      }
+    }
+
+    // OTP input auto-advance
+    document.addEventListener('DOMContentLoaded', () => {
+      ['otp1', 'otp2', 'otp3', 'otp4'].forEach((id, idx, arr) => {
+        const el = document.getElementById(id);
+        el.addEventListener('input', () => {
+          el.classList.remove('error');
+          document.getElementById('otpError').classList.remove('visible');
+          if (el.value && idx < arr.length - 1) document.getElementById(arr[idx + 1]).focus();
+        });
+        el.addEventListener('keydown', e => {
+          if (e.key === 'Backspace' && !el.value && idx > 0) document.getElementById(arr[idx - 1]).focus();
+          if (e.key === 'Enter') submitOTP();
+        });
+      });
+      document.getElementById('otpModal').addEventListener('click', e => { if (e.target.id === 'otpModal') closeOtpModal(); });
+      loadPickups();
+      setInterval(loadPickups, 30000);
+    });
+
+    function renderPickups() {
+      const pickupsContainer = document.getElementById('pickupsContainer');
+      pickupsContainer.innerHTML = '';
+
+      const assignments = getAssignments();
+      const pickups = assignments.filter(a => a.status === 'in_transit' || a.status === 'picked_up' || a.status === 'delivered');
+
+      // Update top stats
+      const stats = getStats();
+      const statVals = document.querySelectorAll('.stat-val');
+      if (statVals.length >= 3) {
+        statVals[0].textContent = pickups.length;
+        statVals[1].textContent = stats.in_progress;
+        statVals[2].textContent = stats.completed;
+      }
+
+      if (pickups.length === 0) {
+        pickupsContainer.innerHTML = '<p style="text-align: center; color: var(--gray-500); padding: 40px;">No active pickups at the moment. Accept an assignment and tap "Start Pickup" to see it here.</p>';
+        lucide.createIcons();
+        return;
+      }
+
+      pickups.forEach(asn => {
+        const pickupId = generatePickupId(asn.id);
+        const isTransit = asn.status === 'in_transit';
+        const isPickedUp = asn.status === 'picked_up';
+
+        let headerActionsHTML = '';
+        let stepHTML = '';
+
+        if (isTransit) {
+          // Heading to user
+          headerActionsHTML = `
+            <div class="card-actions">
+              <a href="collector-messages.html?with=${encodeURIComponent(asn.customerEmail || '')}" class="btn btn-outline" aria-label="Chat with User">
+                <i data-lucide="message-circle"></i>
+                Chat
+              </a>
+              <button class="btn btn-outline" onclick="verifyOTP('${asn.id}')">
+                <i data-lucide="shield-check"></i>
+                Verify OTP
+              </button>
+            </div>
+          `;
+          stepHTML = `
+            <div class="step">
+              <div class="step-circle active">1</div>
+              <span class="step-label active-text">In Transit</span>
+            </div>
+            <div class="step-line idle-line"></div>
+            <div class="step">
+              <div class="step-circle idle">2</div>
+              <span class="step-label idle-text">Picked Up</span>
+            </div>
+            <div class="step-line idle-line"></div>
+            <div class="step">
+              <div class="step-circle idle">3</div>
+              <span class="step-label idle-text">Delivered</span>
+            </div>
+          `;
+        } else if (isPickedUp) {
+          // Got it from user, heading to center
+          headerActionsHTML = `
+            <div class="card-actions">
+              <a href="collector-messages.html?with=${encodeURIComponent(asn.customerEmail || '')}" class="btn btn-outline" aria-label="Chat with User">
+                <i data-lucide="message-circle"></i>
+                Chat
+              </a>
+              <button class="btn btn-green" onclick="completePickup('${asn.id}')">
+                <i data-lucide="circle-check"></i>
+                Mark Delivered
+              </button>
+            </div>
+          `;
+          stepHTML = `
+            <div class="step">
+              <div class="step-circle done">
+                <i data-lucide="check"></i>
+              </div>
+              <span class="step-label done-text">In Transit</span>
+            </div>
+            <div class="step-line done-line"></div>
+            <div class="step">
+              <div class="step-circle active">2</div>
+              <span class="step-label active-text">Picked Up</span>
+            </div>
+            <div class="step-line idle-line"></div>
+            <div class="step">
+              <div class="step-circle idle">3</div>
+              <span class="step-label idle-text">Delivered</span>
+            </div>
+          `;
+        } else {
+          // Delivered
+          headerActionsHTML = `
+            <div class="card-actions">
+              <a href="collector-messages.html?with=${encodeURIComponent(asn.customerEmail || '')}" class="btn btn-outline" aria-label="Chat with User">
+                <i data-lucide="message-circle"></i>
+                Chat
+              </a>
+            </div>
+          `;
+          stepHTML = `
+            <div class="step">
+              <div class="step-circle done">
+                <i data-lucide="check"></i>
+              </div>
+              <span class="step-label done-text">In Transit</span>
+            </div>
+            <div class="step-line done-line"></div>
+            <div class="step">
+              <div class="step-circle done">
+                <i data-lucide="check"></i>
+              </div>
+              <span class="step-label done-text">Picked Up</span>
+            </div>
+            <div class="step-line done-line"></div>
+            <div class="step">
+              <div class="step-circle done">
+                <i data-lucide="check"></i>
+              </div>
+              <span class="step-label done-text">Delivered</span>
+            </div>
+          `;
+        }
+
+        const cardHTML = `
+          <div class="card" style="animation: fadeIn 0.3s ease-out;">
+            <div class="card-header">
+              <div class="card-id-row">
+                <span class="card-id">${pickupId}</span>
+                ${getBadgeHTML(asn.status)}
+              </div>
+              ${headerActionsHTML}
+            </div>
+            <div class="info">
+              <div class="info-row">Assignment: ${asn.id} · User: ${asn.customer}</div>
+              <div class="info-row">Items: ${asn.items}</div>
+
+              <div class="info-row">Phone: <span><a href="tel:${asn.phone}">${asn.phone}</a></span></div>
+            </div>
+            <div class="stepper">
+              ${stepHTML}
+            </div>
+          </div>
+        `;
+
+        pickupsContainer.insertAdjacentHTML('beforeend', cardHTML);
+      });
+
+      const style = document.createElement('style');
+      style.innerHTML = '@keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }';
+      document.head.appendChild(style);
+
+      lucide.createIcons();
+    }
+  </script>
+<script src="collector-common.js"></script>
+<script src="notifications.js"></script>
+</body>
+
+</html>

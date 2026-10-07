@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoRecycle — Collector Notifications</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --green: #10B77F;
+      --green-dark: #10B77F;
+      --green-light: #dcfce7;
+      --navy: #0f172a;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .07), 0 1px 2px rgba(0, 0, 0, .05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --teal: #0d9488;
+      --teal-light: #f0fdfa;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      min-height: 100vh;
+      font-size: 16px;
+    }
+
+    [data-lucide] {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 28px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      margin-right: 8px;
+      text-decoration: none;
+    }
+
+    .nav-brand [data-lucide="recycle"] {
+      color: var(--green);
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+      margin-left: 0;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+
+    .nav-link.active {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .nav-link:not(.active):hover {
+      background: var(--gray-100);
+      color: var(--navy);
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      text-decoration: none;
+    }
+
+    .icon-btn [data-lucide] {
+      opacity: .5;
+      color: var(--navy);
+    }
+
+    .icon-btn.active [data-lucide] {
+      opacity: 1;
+      color: var(--navy);
+    }
+
+    .icon-btn:hover {
+      background: var(--gray-100);
+    }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--white);
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    /* ─── MAIN ─── */
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .page-sub {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* ── NOTIFICATIONS CSS ── */
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notif-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid transparent;
+      transition: border-color .15s;
+    }
+
+    .notif-card:hover {
+      border-color: var(--gray-200);
+    }
+
+    .notif-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--green-dark);
+    }
+
+    .notif-content {
+      flex: 1;
+    }
+
+    .notif-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--navy);
+    }
+
+    .notif-desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .notif-meta {
+      font-size: 11px;
+      color: var(--gray-400);
+    }
+
+    .notif-unread {
+      background: var(--green-light);
+      border-left: 4px solid var(--green);
+    }
+
+    .notif-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      width: 280px;
+      display: none;
+      z-index: 100;
+      margin-top: 8px;
+    }
+
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+      color: var(--navy);
+    }
+
+    .notif-item:last-child {
+      border-bottom: none;
+    }
+
+    .notif-all {
+      display: block;
+      padding: 12px 16px;
+      background: var(--gray-50);
+      color: var(--green);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      border-top: 1px solid var(--gray-200);
+      text-align: center;
+      transition: background .15s;
+    }
+
+    .notif-all:hover {
+      background: var(--gray-100);
+    }
+
+    /* ── PROFILE POPUP ── */
+    .avatar-container {
+      position: relative;
+    }
+
+    .profile-popup {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 12px;
+      width: 340px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .profile-popup.active {
+      display: flex;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-email {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .profile-stats {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tier-badge-popup {
+      background: var(--green);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .profile-menu {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-menu-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .profile-menu-item:hover {
+      background: var(--gray-100);
+    }
+
+    .profile-menu-item [data-lucide] {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .profile-menu-item.logout [data-lucide] {
+      color: #ef4444;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a class="nav-brand" href="{{ url_for('collector_dashboard') }}">
+      <i data-lucide="recycle"></i>
+      <span>EcoRecycle</span>
+      <span class="nav-badge">Collector</span>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="{{ url_for('collector_dashboard') }}">Dashboard</a>
+      <a class="nav-link" href="{{ url_for('collector_assignment') }}">Assignments</a>
+      <a class="nav-link" href="{{ url_for('collector_pickups') }}">Pickups</a>
+    </div>
+    <div class="nav-right">
+      <a href="{{ url_for('collector_messages') }}" class="icon-btn" aria-label="Messages">
+        <i data-lucide="message-circle"></i>
+      </a>
+      <button type="button" class="icon-btn active" aria-label="Notifications" onclick="toggleNotifDropdown()">
+        <i data-lucide="bell"></i>
+        <span class="notif-dot">3</span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-item">New Pickup Assigned: ASN-005</div>
+        <div class="notif-item">Route Optimized for today</div>
+        <div class="notif-item">Delivery Verified for PKP-002</div>
+        <a href="{{ url_for('collector_notify') }}" class="notif-all">See all notifications</a>
+      </div>
+      <div class="avatar-container">
+        <div class="avatar" id="profileBtn" >
+
+          {% if user['profile_pic'] %}
+          <img 
+            src="{{ url_for('static', filename='uploads/' + user['profile_pic']) }}" 
+            style="width:34px;height:34px;border-radius:50%;object-fit:cover;"
+          >
+        {% else %}
+          {{ user['fullname'][0] | upper }}
+        {% endif %}
+        </div>
+
+
+
+
+
+        </div>
+
+        <!-- Profile Popup -->
+        <div class="profile-popup" id="profilePopup">
+          <div class="profile-header">
+            <div class="profile-avatar">{% if user['profile_pic'] %}
+              <img 
+                src="{{ url_for('static', filename='uploads/' + user['profile_pic']) }}" 
+                style="width:35px;height:35px;border-radius:50%;object-fit:cover;"
+              >
+            {% else %}
+              {{ user['fullname'][0] | upper }}
+            {% endif %}</div>
+            <div class="profile-info">
+              <div class="profile-name">{{ user['fullname'] }}</div>
+              <div class="profile-email">{{ user['email'] }}</div>
+            </div>
+          </div>
+
+          <div class="profile-stats">
+            <div class="stat-row">
+              <div class="stat-label">
+                <i data-lucide="truck"></i>
+                Total Pickups
+              </div>
+              <div class="stat-value">342</div>
+            </div>
+          </div>
+
+          <div class="profile-menu">
+            <a href="{{ url_for('collector_settings') }}" class="profile-menu-item">
+              <i data-lucide="settings"></i>
+              Settings
+            </a>
+            <a class="profile-menu-item logout" href="{{ url_for('logout') }}" >
+              <i data-lucide="log-out"></i>
+              Log out
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <main>
+    <div class="page-header">
+      <h1 class="page-title">Notifications</h1>
+      <p class="page-sub">Stay updated on your pickups and routes</p>
+    </div>
+    <div class="notif-list">
+      <div class="notif-card notif-unread">
+        <div class="notif-icon"><i data-lucide="truck"></i></div>
+        <div class="notif-content">
+          <div class="notif-title">New Pickup Assigned</div>
+          <div class="notif-desc">You have been assigned to pickup request ASN-005 from Sara Khalid.</div>
+          <div class="notif-meta">Today • 10:15 AM</div>
+        </div>
+      </div>
+      <div class="notif-card notif-unread">
+        <div class="notif-icon"><i data-lucide="map-pin"></i></div>
+        <div class="notif-content">
+          <div class="notif-title">Route Updated</div>
+          <div class="notif-desc">Your collection route for today has been optimized.</div>
+          <div class="notif-meta">Today • 08:00 AM</div>
+        </div>
+      </div>
+      <div class="notif-card">
+        <div class="notif-icon"><i data-lucide="building-2"></i></div>
+        <div class="notif-content">
+          <div class="notif-title">Delivery Verified</div>
+          <div class="notif-desc">GreenTech Hub successfully verified your drop-off for PKP-002.</div>
+          <div class="notif-meta">Yesterday • 04:30 PM</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    const profileBtn = document.getElementById('profileBtn');
+    const profilePopup = document.getElementById('profilePopup');
+
+    if (profileBtn && profilePopup) {
+      profileBtn.addEventListener('click', () => {
+        profilePopup.classList.toggle('active');
+      });
+    }
+
+    function toggleNotifDropdown() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.addEventListener('click', function (event) {
+      if (!event.target.closest('.nav-icon-btn') && !event.target.closest('.icon-btn') && !event.target.closest('#notifDropdown')) {
+        const nd = document.getElementById('notifDropdown');
+        if (nd) nd.style.display = 'none';
+      }
+
+      if (profileBtn && profilePopup && !profileBtn.contains(event.target) && !profilePopup.contains(event.target)) {
+        profilePopup.classList.remove('active');
+      }
+    });
+
+    lucide.createIcons();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoRecycle – Certificates</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #10B77F;
+      --green-dark: #10B77F;
+      --green-light: #dcfce7;
+      --navy: #0f172a;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --white: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    [data-lucide] {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      margin-right: 8px;
+    }
+
+    .nav-brand > [data-lucide="recycle"] {
+      color: var(--green);
+      stroke: var(--green);
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+      margin-left: 0;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+
+    .nav-link.active {
+      background: black;
+      color: var(--white);
+    }
+
+    .nav-link:not(.active):hover { background: var(--gray-100); color: var(--navy); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .nav-icon-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent;
+      border: none; cursor: pointer;
+      position: relative;
+    }
+    .nav-icon-btn [data-lucide] { opacity: .5; color: var(--navy); }
+    .nav-icon-btn:hover { background: var(--gray-100); }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 16px; height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--white);
+    }
+
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    .avatar-container {
+      position: relative;
+    }
+
+    /* ── PROFILE POPUP ── */
+    .profile-popup {
+      position: absolute;
+      top: 100%;
+      left: -306px;
+      margin-top: 12px;
+      width: 340px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .profile-popup.active {
+      display: flex;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-email {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .profile-stats {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tier-badge-popup {
+      background: var(--navy);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .progress-info {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 99px;
+      width: 63.5%;
+    }
+
+    .profile-menu {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-menu-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .profile-menu-item:hover {
+      background: var(--gray-100);
+    }
+
+    .profile-menu-item [data-lucide] {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .profile-menu-item.logout [data-lucide] {
+      color: #ef4444;
+    }
+
+    .notif-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      width: 280px;
+      display: none;
+      z-index: 100;
+      margin-top: 8px;
+    }
+
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+      color: var(--navy);
+    }
+
+    .notif-item:last-child { border-bottom: none; }
+
+    .notif-all {
+      display: block;
+      padding: 12px 16px;
+      background: var(--gray-50);
+      color: var(--green-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      border-top: 1px solid var(--gray-200);
+      text-align: center;
+    }
+
+    .notif-all:hover { background: var(--gray-100); }
+
+    /* ── PAGE ── */
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 700; }
+    .page-header p  { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ── STAT CARDS ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-icon-wrap {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--green-light);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--green-dark);
+    }
+
+    .stat-val   { font-size: 28px; font-weight: 800; line-height: 1; }
+    .stat-label { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ── CERT LIST ── */
+    .cert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cert-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid transparent;
+      transition: border-color .15s;
+    }
+    .cert-card:hover { border-color: var(--gray-200); }
+
+    .cert-badge-icon {
+      width: 52px; height: 52px;
+      border-radius: var(--radius-md);
+      background: var(--green-light);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      color: var(--green-dark);
+    }
+
+    .cert-info { flex: 1; }
+
+    .cert-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 9px;
+    }
+
+    .cert-id {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .verified-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .cert-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .cert-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+    .cert-meta-row svg { color: var(--gray-400); flex-shrink: 0; }
+
+    .cert-meta-sep {
+      margin: 0 6px;
+      color: var(--gray-300);
+    }
+
+    .btn-download {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 18px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--navy);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s, border-color .15s;
+    }
+    .btn-download:hover { background: var(--gray-100); border-color: var(--gray-300); }
+    .btn-download svg  { color: var(--gray-500); }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ NAVBAR ══════════════ -->
+<nav>
+  <div class="nav-brand">
+    <i data-lucide="recycle"></i>
+    EcoRecycle
+    <span class="nav-badge">User</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="user-dashboard.html" class="nav-link">
+      Dashboard
+    </a>
+    <a href="user-requests.html" class="nav-link">
+      My Requests
+    </a>
+    <a href="user-rewards.html" class="nav-link">
+      Rewards
+    </a>
+    <a href="user-certificates.html" class="nav-link active">
+      Certificates
+    </a>
+  </div>
+
+  <div class="nav-actions">
+    <a href="user-messages.html" class="nav-link"><i data-lucide="message-circle"></i></a>
+    <button class="nav-icon-btn" aria-label="Notifications" onclick="toggleNotifDropdown()">
+      <i data-lucide="bell"></i>
+      <span class="notif-dot">2</span>
+    </button>
+    <div class="notif-dropdown" id="notifDropdown">
+      <div class="notif-item">New pickup scheduled for tomorrow at 10 AM</div>
+      <div class="notif-item">Certificate CERT-2026-004 is ready for download</div>
+      <a href="user-notifications.html" class="notif-all">See all notifications</a>
+    </div>
+    <div class="avatar-container">
+      <div class="avatar" id="profileBtn" title="Rahul S">RS</div>
+      
+      <!-- Profile Popup -->
+      <div class="profile-popup" id="profilePopup">
+        <div class="profile-header">
+          <div class="profile-avatar">RS</div>
+          <div class="profile-info">
+            <div class="profile-name">Rahul Sharma</div>
+            <div class="profile-email">rahul@example.com</div>
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="stat-row">
+            <div class="stat-label">
+              <i data-lucide="star"></i>
+              Points
+            </div>
+            <div class="stat-value">1,270 pts</div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat-label">Tier</div>
+            <div class="tier-badge-popup">
+              <i data-lucide="trending-up"></i>
+              Silver
+            </div>
+          </div>
+
+          <div>
+            <div class="progress-info">Progress to Gold Tier</div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill"></div>
+            </div>
+            <div class="progress-info" style="margin-top: 6px;">1,270 / 2,000</div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat-label">
+              <i data-lucide="gift"></i>
+              Recycled
+            </div>
+            <div class="stat-value">12 this month</div>
+          </div>
+        </div>
+
+        <div class="profile-menu">
+          <a href="user-rewards.html" class="profile-menu-item">
+            <i data-lucide="star"></i>
+            Rewards
+          </a>
+          <a href="user-settings.html" class="profile-menu-item">
+            <i data-lucide="settings"></i>
+            Settings
+          </a>
+          <button class="profile-menu-item logout">
+            <i data-lucide="log-out"></i>
+            Log out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════ PAGE ══════════════ -->
+<div class="page">
+
+  <div class="page-header">
+    <h1>Recycling Certificates</h1>
+    <p>Download proof of your responsible e-waste disposal</p>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-icon-wrap">
+        <i data-lucide="file-badge" style="width:24px;height:24px;"></i>
+      </div>
+      <div>
+        <div class="stat-val">4</div>
+        <div class="stat-label">Total Certificates</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrap">
+        <i data-lucide="package" style="width:24px;height:24px;"></i>
+      </div>
+      <div>
+        <div class="stat-val">17.6 kg</div>
+        <div class="stat-label">Total Weight Recycled</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon-wrap">
+        <i data-lucide="award" style="width:24px;height:24px;"></i>
+      </div>
+      <div>
+        <div class="stat-val">37 kg</div>
+        <div class="stat-label">CO₂ Offset (est.)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Certificate list -->
+  <div class="cert-list">
+
+    <!-- CERT-2026-001 -->
+    <div class="cert-card">
+      <div class="cert-badge-icon">
+        <i data-lucide="award" style="width:26px;height:26px;"></i>
+      </div>
+      <div class="cert-info">
+        <div class="cert-top">
+          <span class="cert-id">CERT-2026-001</span>
+          <span class="verified-badge">Verified</span>
+        </div>
+        <div class="cert-meta">
+          <div class="cert-meta-row">
+            <i data-lucide="package" style="width:14px;height:14px;"></i>
+            1x Laptop, 2x Smartphones — 3.2 kg
+          </div>
+          <div class="cert-meta-row">
+            <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+            2026-03-12
+            <span class="cert-meta-sep">·</span>
+            GreenTech Recycling Hub
+          </div>
+        </div>
+      </div>
+      <button class="btn-download">
+        <i data-lucide="download" style="width:15px;height:15px;"></i>
+        Download
+      </button>
+    </div>
+
+    <!-- CERT-2026-002 -->
+    <div class="cert-card">
+      <div class="cert-badge-icon">
+        <i data-lucide="award" style="width:26px;height:26px;"></i>
+      </div>
+      <div class="cert-info">
+        <div class="cert-top">
+          <span class="cert-id">CERT-2026-002</span>
+          <span class="verified-badge">Verified</span>
+        </div>
+        <div class="cert-meta">
+          <div class="cert-meta-row">
+            <i data-lucide="package" style="width:14px;height:14px;"></i>
+            1x Monitor, 1x Printer — 8.5 kg
+          </div>
+          <div class="cert-meta-row">
+            <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+            2026-03-08
+            <span class="cert-meta-sep">·</span>
+            EcoWaste Solutions
+          </div>
+        </div>
+      </div>
+      <button class="btn-download">
+        <i data-lucide="download" style="width:15px;height:15px;"></i>
+        Download
+      </button>
+    </div>
+
+    <!-- CERT-2026-003 -->
+    <div class="cert-card">
+      <div class="cert-badge-icon">
+        <i data-lucide="award" style="width:26px;height:26px;"></i>
+      </div>
+      <div class="cert-info">
+        <div class="cert-top">
+          <span class="cert-id">CERT-2026-003</span>
+          <span class="verified-badge">Verified</span>
+        </div>
+        <div class="cert-meta">
+          <div class="cert-meta-row">
+            <i data-lucide="package" style="width:14px;height:14px;"></i>
+            10x Batteries, 5x Cables — 1.8 kg
+          </div>
+          <div class="cert-meta-row">
+            <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+            2026-03-01
+            <span class="cert-meta-sep">·</span>
+            GreenTech Recycling Hub
+          </div>
+        </div>
+      </div>
+      <button class="btn-download">
+        <i data-lucide="download" style="width:15px;height:15px;"></i>
+        Download
+      </button>
+    </div>
+
+    <!-- CERT-2026-004 -->
+    <div class="cert-card">
+      <div class="cert-badge-icon">
+        <i data-lucide="award" style="width:26px;height:26px;"></i>
+      </div>
+      <div class="cert-info">
+        <div class="cert-top">
+          <span class="cert-id">CERT-2026-004</span>
+          <span class="verified-badge">Verified</span>
+        </div>
+        <div class="cert-meta">
+          <div class="cert-meta-row">
+            <i data-lucide="package" style="width:14px;height:14px;"></i>
+            2x Small Appliances — 4.1 kg
+          </div>
+          <div class="cert-meta-row">
+            <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+            2026-02-20
+            <span class="cert-meta-sep">·</span>
+            CleanEarth Center
+          </div>
+        </div>
+      </div>
+      <button class="btn-download">
+        <i data-lucide="download" style="width:15px;height:15px;"></i>
+        Download
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  
+    lucide.createIcons();
+  
+    const API = "http://127.0.0.1:8082/api";
+    const currentUser = JSON.parse(localStorage.getItem("ecorepair_user") || "null");
+  
+    if (!currentUser || !currentUser.email) {
+      window.location.href = "Login.html";
+      return;
+    }
+  
+    // ===== Profile popup =====
+    const profileBtn = document.getElementById("profileBtn");
+    const profilePopup = document.getElementById("profilePopup");
+  
+    if (profileBtn && profilePopup) {
+      profileBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        profilePopup.classList.toggle("active");
+      });
+      document.addEventListener("click", (e) => {
+        if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
+          profilePopup.classList.remove("active");
+        }
+      });
+    }
+  
+    function initials(name) {
+      return (name || "User").split(/\s+/).filter(Boolean).slice(0, 2)
+        .map(w => w[0].toUpperCase()).join("") || "U";
+    }
+  
+    function renderProfile(user) {
+      const ini = initials(user.fullName);
+      if (profileBtn) { profileBtn.textContent = ini; profileBtn.title = user.fullName; }
+      document.querySelector(".profile-popup .profile-avatar").textContent = ini;
+      document.querySelector(".profile-popup .profile-name").textContent = user.fullName;
+      document.querySelector(".profile-popup .profile-email").textContent = user.email;
+    }
+  
+    async function loadProfile() {
+      renderProfile(currentUser);
+      try {
+        const res = await fetch(`${API}/users/profile?email=${encodeURIComponent(currentUser.email)}`);
+        if (res.ok) {
+          const freshUser = await res.json();
+          renderProfile(freshUser);
+          localStorage.setItem("ecorepair_user", JSON.stringify({ ...currentUser, ...freshUser }));
+        }
+      } catch (err) {
+        console.error("Could not refresh profile:", err);
+      }
+    }
+  
+    document.querySelector(".profile-menu-item.logout")?.addEventListener("click", () => {
+      localStorage.removeItem("ecorepair_user");
+      window.location.href = "Login.html";
+    });
+  
+    // ===== Notification dropdown — must be global for inline onclick to find it =====
+    window.toggleNotifDropdown = function () {
+      const dropdown = document.getElementById("notifDropdown");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    };
+  
+    window.onclick = function (event) {
+      if (!event.target.closest(".nav-icon-btn") && !event.target.closest("#notifDropdown")) {
+        document.getElementById("notifDropdown").style.display = "none";
+      }
+    };
+  
+    // ===== Certificates =====
+    const certList = document.querySelector(".cert-list");
+  
+    function updateCertStats(certs) {
+      const totalWeight = certs.reduce((sum, c) => sum + c.weightKg, 0);
+      const totalCo2 = certs.reduce((sum, c) => sum + c.co2OffsetKg, 0);
+  
+      document.querySelector(".stat-row .stat-card:nth-child(1) .stat-val").textContent = certs.length;
+      document.querySelector(".stat-row .stat-card:nth-child(2) .stat-val").textContent = `${totalWeight.toFixed(1)} kg`;
+      document.querySelector(".stat-row .stat-card:nth-child(3) .stat-val").textContent = `${totalCo2.toFixed(0)} kg`;
+    }
+  
+    async function loadCertificates() {
+      try {
+        const res = await fetch(`${API}/certificates?email=${encodeURIComponent(currentUser.email)}`);
+        if (!res.ok) return;
+        const certs = await res.json();
+  
+        updateCertStats(certs);
+        certList.innerHTML = "";
+  
+        if (certs.length === 0) {
+          certList.innerHTML = `<p style="font-size:13px;color:var(--gray-500);">No certificates yet.</p>`;
+          return;
+        }
+  
+        certs.forEach(cert => {
+          const card = document.createElement("div");
+          card.className = "cert-card";
+          card.innerHTML = `
+            <div class="cert-badge-icon">
+              <i data-lucide="award" style="width:26px;height:26px;"></i>
+            </div>
+            <div class="cert-info">
+              <div class="cert-top">
+                <span class="cert-id">${cert.certCode}</span>
+                <span class="verified-badge">Verified</span>
+              </div>
+              <div class="cert-meta">
+                <div class="cert-meta-row">
+                  <i data-lucide="package" style="width:14px;height:14px;"></i>
+                  ${cert.itemsSummary} — ${cert.weightKg} kg
+                </div>
+                <div class="cert-meta-row">
+                  <i data-lucide="calendar" style="width:14px;height:14px;"></i>
+                  ${cert.issuedDate}
+                  <span class="cert-meta-sep">·</span>
+                  ${cert.centerName}
+                </div>
+              </div>
+            </div>
+            <button class="btn-download" type="button">
+              <i data-lucide="download" style="width:15px;height:15px;"></i>
+              Download
+            </button>
+          `;
+          certList.appendChild(card);
+        });
+  
+        lucide.createIcons();
+      } catch (err) {
+        console.error("Could not load certificates:", err);
+      }
+    }
+  
+    loadProfile();
+    loadCertificates();
+  
+  });
+  </script>
+</body>
+</html>

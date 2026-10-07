@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoRecycle – Profile Settings</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #10B77F;
+      --green-dark: #0d9668;
+      --green-light: #dcfce7;
+      --navy: #0f172a;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-400: #94a3b8;
+      --gray-500: #64748b;
+      --gray-700: #334155;
+      --white: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.05);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      min-height: 100vh;
+      font-size: 18px;
+    }
+
+    [data-lucide] {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 28px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      margin-right: 8px;
+    }
+
+    .nav-brand [data-lucide="recycle"] {
+      color: var(--green);
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+      margin-left: 0;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+
+    .nav-link.active {
+      background: black;
+      color: var(--white);
+    }
+
+    .nav-link:not(.active):hover { background: var(--gray-100); color: var(--navy); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .nav-icon-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent;
+      border: none; cursor: pointer;
+      position: relative;
+    }
+    .nav-icon-btn [data-lucide] { opacity: .5; color: var(--navy); }
+    .nav-icon-btn:hover { background: var(--gray-100); }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 16px; height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--white);
+    }
+
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    .avatar-container {
+      position: relative;
+    }
+
+    /* ── PROFILE POPUP ── */
+    .profile-popup {
+      position: absolute;
+      top: 100%;
+      left: -306px;
+      margin-top: 12px;
+      width: 340px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .profile-popup.active {
+      display: flex;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-email {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .profile-stats {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tier-badge-popup {
+      background: var(--navy);
+      color: var(--white);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .progress-info {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--green);
+      border-radius: 99px;
+      width: 63.5%;
+    }
+
+    .profile-menu {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-menu-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .profile-menu-item:hover {
+      background: var(--gray-100);
+    }
+
+    .profile-menu-item [data-lucide] {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .profile-menu-item.logout [data-lucide] {
+      color: #ef4444;
+    }
+
+    .notif-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      width: 280px;
+      display: none;
+      z-index: 100;
+      margin-top: 8px;
+    }
+
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 14px;
+      color: var(--navy);
+    }
+
+    .notif-item:last-child { border-bottom: none; }
+
+    .notif-all {
+      display: block;
+      padding: 12px 16px;
+      background: var(--gray-50);
+      color: var(--green-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      border-top: 1px solid var(--gray-200);
+      text-align: center;
+    }
+
+    .notif-all:hover { background: var(--gray-100); }
+
+    /* ── PAGE ── */
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .page-header { margin-bottom: 28px; }
+    .page-header h1 { font-size: 26px; font-weight: 700; }
+    .page-header p  { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ── SECTION CARD ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 28px 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title [data-lucide] { color: var(--green); width: 20px; height: 20px; }
+
+    .card-sub {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-bottom: 22px;
+    }
+
+    /* ── PROFILE PICTURE ── */
+    .avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .avatar-lg {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 22px;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      border: 3px solid var(--white);
+      box-shadow: 0 0 0 2px var(--green-light);
+    }
+
+    .avatar-edit-btn {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--green);
+      border: 2px solid var(--white);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    .avatar-edit-btn [data-lucide] { width: 12px; height: 12px; color: white; }
+
+    .avatar-name { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+    .avatar-email { font-size: 13px; color: var(--gray-500); margin-bottom: 5px; }
+    .avatar-hint  { font-size: 12px; color: var(--gray-400); }
+
+    /* ── FORM ── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-field { margin-bottom: 16px; }
+    .form-field:last-of-type { margin-bottom: 0; }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-700);
+      margin-bottom: 7px;
+    }
+
+    .field-label [data-lucide] { width: 14px; height: 14px; color: var(--gray-500); }
+
+    .field-input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 0 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .field-input:focus { border-color: var(--green); }
+    .field-input:disabled {
+      background: var(--gray-100);
+      color: var(--gray-400);
+      cursor: not-allowed;
+    }
+    .field-input::placeholder { color: var(--gray-300); }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-top: 6px;
+    }
+
+    /* password input wrapper */
+    .pw-wrap {
+      position: relative;
+    }
+    .pw-wrap .field-input { padding-right: 44px; }
+    .pw-toggle {
+      position: absolute;
+      right: 12px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      cursor: pointer;
+      display: flex; align-items: center;
+      color: var(--gray-400);
+    }
+    .pw-toggle [data-lucide] { width: 16px; height: 16px; }
+    .pw-toggle:hover { color: var(--gray-600); }
+
+    /* ── BUTTONS ── */
+    .btn-green {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 11px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s;
+      margin-top: 20px;
+    }
+    .btn-green:hover { background: var(--green-dark); }
+
+    .btn-green [data-lucide] { width: 15px; height: 15px; }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--white);
+      color: var(--navy);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .15s;
+      margin-top: 20px;
+    }
+    .btn-outline:hover { background: var(--gray-100); }
+
+    .btn-outline [data-lucide] { width: 14px; height: 14px; }
+
+    /* ── SAVED ADDRESSES ── */
+    .address-block {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 20px;
+    }
+
+    .address-block-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .default-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
+
+    .default-badge [data-lucide] { width: 10px; height: 10px; }
+
+    .address-value {
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 0 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--navy);
+      background: var(--white);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .address-value:focus { border-color: var(--green); }
+
+    .add-address-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--navy);
+    }
+
+    .add-address-row {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--gray-200);
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ NAVBAR ══════════════ -->
+<nav>
+  <div class="nav-brand">
+    <i data-lucide="recycle"></i>
+    EcoRecycle
+    <span class="nav-badge">User</span>
+  </div>
+
+  <div class="nav-links">
+    <a href="user-dashboard.html" class="nav-link">Dashboard</a>
+    <a href="user-requests.html" class="nav-link">My Requests</a>
+    <a href="user-rewards.html" class="nav-link">Rewards</a>
+    <a href="user-certificates.html" class="nav-link">Certificates</a>
+  </div>
+
+  <div class="nav-actions">
+    <a href="user-messages.html" class="nav-link"><i data-lucide="message-circle"></i></a>
+    <button class="nav-icon-btn" aria-label="Notifications" onclick="toggleNotifDropdown()">
+      <i data-lucide="bell"></i>
+      <span class="notif-dot">2</span>
+    </button>
+    <div class="notif-dropdown" id="notifDropdown">
+      <div class="notif-item">New pickup scheduled for tomorrow at 10 AM</div>
+      <div class="notif-item">Certificate CERT-2026-004 is ready for download</div>
+      <a href="user-notifications.html" class="notif-all">See all notifications</a>
+    </div>
+    <div class="avatar-container">
+      <div class="avatar" id="profileBtn" title="Rahul S">RS</div>
+      
+      <!-- Profile Popup -->
+      <div class="profile-popup" id="profilePopup">
+        <div class="profile-header">
+          <div class="profile-avatar">RS</div>
+          <div class="profile-info">
+            <div class="profile-name">Rahul Sharma</div>
+            <div class="profile-email">rahul@example.com</div>
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="stat-row">
+            <div class="stat-label">
+              <i data-lucide="star"></i>
+              Points
+            </div>
+            <div class="stat-value">1,270 pts</div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat-label">Tier</div>
+            <div class="tier-badge-popup">
+              <i data-lucide="trending-up"></i>
+              Silver
+            </div>
+          </div>
+
+          <div>
+            <div class="progress-info">Progress to Gold Tier</div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill"></div>
+            </div>
+            <div class="progress-info" style="margin-top: 6px;">1,270 / 2,000</div>
+          </div>
+
+          <div class="stat-row">
+            <div class="stat-label">Recycled this month</div>
+            <div class="stat-value">12 this month</div>
+          </div>
+        </div>
+
+        <div class="profile-menu">
+          <a href="user-rewards.html" class="profile-menu-item">
+            <i data-lucide="star"></i>
+            Rewards
+          </a>
+          <a href="user-settings.html" class="profile-menu-item">
+            <i data-lucide="settings"></i>
+            Settings
+          </a>
+          <button class="profile-menu-item logout">
+            <i data-lucide="log-out"></i>
+            Log out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════ PAGE ══════════════ -->
+<div class="page">
+
+  <div class="page-header">
+    <h1>Profile Settings</h1>
+    <p>Manage your account information</p>
+  </div>
+
+  <!-- ── Profile Picture ── -->
+  <div class="card">
+    <div class="card-title">Profile Picture</div>
+    <p class="card-sub">Upload a photo to personalize your account</p>
+
+    <div class="avatar-row">
+      <div class="avatar-wrap">
+        <div class="avatar-lg">RS</div>
+        <div class="avatar-edit-btn">
+          <i data-lucide="camera"></i>
+        </div>
+      </div>
+      <div class="avatar-info">
+        <div class="avatar-name">Rahul Sharma</div>
+        <div class="avatar-email">rahul@example.com</div>
+        <div class="avatar-hint">JPG, PNG or GIF. Max 2MB.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Personal Information ── -->
+  <div class="card">
+    <div class="card-title">Personal Information</div>
+    <p class="card-sub">Update your personal details</p>
+
+    <div class="form-row">
+      <div>
+        <div class="field-label">
+          <i data-lucide="user"></i>
+          First Name
+        </div>
+        <input class="field-input" type="text" value="Rahul" />
+      </div>
+      <div>
+        <div class="field-label">
+          <i data-lucide="user"></i>
+          Last Name
+        </div>
+        <input class="field-input" type="text" value="Sharma" />
+      </div>
+    </div>
+
+    <div class="form-field">
+      <div class="field-label">
+        <i data-lucide="mail"></i>
+        Email
+      </div>
+      <input class="field-input" type="email" value="rahul@example.com" disabled />
+      <p class="field-hint">Contact support to change your email address</p>
+    </div>
+
+    <div class="form-field">
+      <div class="field-label">
+        <i data-lucide="phone"></i>
+        Phone
+      </div>
+      <input class="field-input" type="tel" value="+91 98765 43210" />
+    </div>
+
+    <button class="btn-green">
+      <i data-lucide="save"></i>
+      Save Changes
+    </button>
+  </div>
+
+  <!-- ── Saved Addresses ── -->
+  <div class="card">
+    <div class="card-title">
+      <i data-lucide="map-pin"></i>
+      Saved Addresses
+    </div>
+    <p class="card-sub">Manage your pickup addresses. The default address will be auto-selected when requesting a pickup.</p>
+
+    <div class="address-block">
+      <div class="address-block-label">
+        Home
+        <span class="default-badge">
+          <i data-lucide="star"></i>
+          Default
+        </span>
+      </div>
+      <input class="address-value" type="text" value="123 Green Lane, Eco City" />
+    </div>
+
+    <hr class="divider" />
+
+    <div class="add-address-title">Add New Address</div>
+    <div class="add-address-row">
+      <div>
+        <div class="field-label" style="margin-bottom:7px;font-size:13px;color:var(--gray-700);">Label</div>
+        <input class="field-input" type="text" placeholder="e.g. Office, Parent's House" />
+      </div>
+      <div>
+        <div class="field-label" style="margin-bottom:7px;font-size:13px;color:var(--gray-700);">Address</div>
+        <input class="field-input" type="text" placeholder="Full address" />
+      </div>
+    </div>
+
+    <button class="btn-outline">
+      <i data-lucide="plus"></i>
+      Add Address
+    </button>
+  </div>
+
+  <!-- ── Change Password ── -->
+  <div class="card">
+    <div class="card-title">Change Password</div>
+    <p class="card-sub">Update your password to keep your account secure</p>
+
+    <div class="form-field">
+      <div class="field-label">
+        <i data-lucide="lock"></i>
+        Current Password
+      </div>
+      <div class="pw-wrap">
+        <input class="field-input" type="password" />
+        <button class="pw-toggle" tabindex="-1" aria-label="Show password">
+          <i data-lucide="eye"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <div class="field-label">
+        <i data-lucide="lock"></i>
+        New Password
+      </div>
+      <div class="pw-wrap">
+        <input class="field-input" type="password" />
+        <button class="pw-toggle" tabindex="-1" aria-label="Show password">
+          <i data-lucide="eye"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <div class="field-label">
+        <i data-lucide="lock"></i>
+        Confirm New Password
+      </div>
+      <input class="field-input" type="password" />
+    </div>
+
+    <button class="btn-outline" style="margin-top:20px;">
+      Update Password
+    </button>
+  </div>
+
+</div>
+
+<script>
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // Profile popup toggle
+  document.addEventListener("DOMContentLoaded", function () {
+
+lucide.createIcons();
+
+const API = "http://127.0.0.1:8082/api";
+const currentUser = JSON.parse(localStorage.getItem("ecorepair_user") || "null");
+
+if (!currentUser || !currentUser.email) {
+  window.location.href = "Login.html";
+  return;
+}
+
+const profileBtn = document.getElementById("profileBtn");
+const profilePopup = document.getElementById("profilePopup");
+
+// ===== Toggle popup — set up ONCE, outside renderProfile =====
+if (profileBtn && profilePopup) {
+  profileBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    profilePopup.classList.toggle("active");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
+      profilePopup.classList.remove("active");
+    }
+  });
+} else {
+  console.error("profileBtn or profilePopup not found on this page.");
+}
+
+function initials(name) {
+  return (name || "User")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0].toUpperCase())
+    .join("") || "U";
+}
+
+// ===== renderProfile ONLY updates text — no listeners in here =====
+function renderProfile(user) {
+  const ini = initials(user.fullName);
+
+  if (profileBtn) {
+    profileBtn.textContent = ini;
+    profileBtn.title = user.fullName;
+  }
+
+  document.querySelector(".profile-popup .profile-avatar").textContent = ini;
+  document.querySelector(".profile-popup .profile-name").textContent = user.fullName;
+  document.querySelector(".profile-popup .profile-email").textContent = user.email;
+}
+
+async function loadProfile() {
+  renderProfile(currentUser); // instant paint
+
+  try {
+    const res = await fetch(`${API}/users/profile?email=${encodeURIComponent(currentUser.email)}`);
+    if (res.ok) {
+      const freshUser = await res.json();
+      renderProfile(freshUser); // overwrite with fresh data — text only, no re-attaching listeners
+      localStorage.setItem("ecorepair_user", JSON.stringify({ ...currentUser, ...freshUser }));
+    }
+  } catch (err) {
+    console.error("Could not refresh profile:", err);
+  }
+}
+
+loadProfile();
+
+// Logout
+document.querySelector(".profile-menu-item.logout")?.addEventListener("click", () => {
+  localStorage.removeItem("ecorepair_user");
+  window.location.href = "Login.html";
+});
+
+});
+  // Close profile popup when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
+      profilePopup.classList.remove('active');
+    }
+  });
+
+  // Toggle notification dropdown
+  function toggleNotifDropdown() {
+    const notifDropdown = document.getElementById('notifDropdown');
+    notifDropdown.style.display = notifDropdown.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // Close notif dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    const notifBtn = document.querySelector('[aria-label="Notifications"]');
+    const notifDropdown = document.getElementById('notifDropdown');
+    if (!notifBtn.contains(e.target) && !notifDropdown.contains(e.target)) {
+      notifDropdown.style.display = 'none';
+    }
+  });
+
+  // Password toggle functionality
+  const pwToggles = document.querySelectorAll('.pw-toggle');
+  pwToggles.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const input = btn.parentElement.querySelector('.field-input');
+      const icon = btn.querySelector('[data-lucide]');
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+        input.type = 'password';
+        icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+backend\example\EcoBackend\entity\Notification.class
+backend\example\EcoBackend\controller\MessageController.class
+backend\example\EcoBackend\service\NotificationService.class
+backend\example\EcoBackend\repository\MessageRepository.class
+backend\example\EcoBackend\config\DataSeeder.class
+backend\example\EcoBackend\entity\Message.class
+backend\example\EcoBackend\controller\NotificationController.class
+backend\example\EcoBackend\repository\NotificationRepository.class

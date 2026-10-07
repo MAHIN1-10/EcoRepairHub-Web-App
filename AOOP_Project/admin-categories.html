@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoRecycle — Categories</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #10B77F;
+      --green-dark: #10B77F;
+      --green-light: #dcfce7;
+      --navy: #0f172a;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-500: #64748b;
+      --white: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow: 0 1px 3px rgba(0, 0, 0, .07), 0 1px 2px rgba(0, 0, 0, .05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, .08);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--gray-100);
+      color: var(--navy);
+      min-height: 100vh;
+      font-size: 16px;
+    }
+
+    [data-lucide] { width: 20px; height: 20px; stroke-width: 2px; }
+
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0 28px;
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      margin-right: 14px;
+    }
+
+    .nav-brand [data-lucide="recycle"] {
+      color: var(--green);
+      width: 28px;
+      height: 28px;
+    }
+
+    .nav-badge {
+      background: var(--navy);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+
+    .nav-link.active {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    .nav-link:not(.active):hover {
+      background: var(--gray-100);
+      color: var(--navy);
+    }
+
+    .nav-actions {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .nav-icon-btn:hover { background: var(--gray-100); }
+
+    .notif-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      background: #ef4444;
+      border-radius: 50%;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--white);
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .avatar-container {
+      position: relative;
+    }
+
+    .profile-popup {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      width: 320px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+    }
+
+    .profile-popup.active {
+      display: flex;
+    }
+
+    .notification-popup {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      width: 360px;
+      max-width: calc(100vw - 32px);
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, .15);
+      z-index: 210;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--gray-200);
+    }
+
+    .notification-popup.active {
+      display: flex;
+    }
+
+    .notif-popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .notif-popup-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .notif-popup-close {
+      border: none;
+      background: transparent;
+      color: var(--gray-500);
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .notif-popup-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 16px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .notif-card {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: var(--gray-50);
+    }
+
+    .notif-card.unread {
+      background: #f0fdf4;
+      border-left: 4px solid var(--green);
+    }
+
+    .notif-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+      flex-shrink: 0;
+    }
+
+    .notif-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .notif-desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .notif-meta {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-top: 8px;
+    }
+
+    .see-all-btn {
+      margin: 0 16px 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--green);
+      color: var(--white);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: background .15s;
+    }
+
+    .see-all-btn:hover {
+      background: #0d9467;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .profile-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .profile-email {
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu {
+      padding: 8px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-menu-item {
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+    }
+
+    .profile-menu-item:hover {
+      background: var(--gray-100);
+    }
+
+    .profile-menu-item [data-lucide] {
+      width: 18px;
+      height: 18px;
+      color: var(--gray-500);
+    }
+
+    .profile-menu-item.logout {
+      color: #ef4444;
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .profile-menu-item.logout [data-lucide] {
+      color: #ef4444;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    .page-sub {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-top: 6px;
+      max-width: 620px;
+    }
+
+    .btn-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, transform .1s, box-shadow .15s;
+      box-shadow: 0 2px 8px rgba(16, 183, 127, .28);
+      white-space: nowrap;
+    }
+
+    .btn-add:hover {
+      background: #0f805f;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(16, 183, 127, .32);
+    }
+
+    .btn-add:active { transform: translateY(4); }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s;
+    }
+
+    .stat-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--green-dark);
+      flex-shrink: 0;
+    }
+
+    .stat-val {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    .search-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-wrap [data-lucide] {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-500);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 11px 14px 11px 38px;
+      background: var(--white);
+      color: var(--navy);
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .search-input::placeholder { color: var(--gray-500); }
+
+    .search-input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(16, 183, 127, .12);
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .category-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: transform .15s, box-shadow .15s;
+    }
+
+    .category-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .category-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .category-id {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .category-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.15;
+    }
+
+    .category-desc {
+      font-size: 14px;
+      color: var(--gray-500);
+      line-height: 1.6;
+      max-height: 72px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .category-details {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding: 16px 0;
+      border-top: 1px solid var(--gray-100);
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-label {
+      font-size: 12px;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-weight: 600;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      border: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      color: var(--gray-700);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .15s, transform .1s, border-color .15s;
+    }
+
+    .icon-btn:hover {
+      background: var(--white);
+      border-color: var(--gray-300);
+      transform: translateY(-1px);
+    }
+
+    .icon-btn.edit { color: var(--green-dark); }
+    .icon-btn.del { color: #dc2626; }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .cta-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      min-width: 120px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--gray-200);
+      background: var(--white);
+      color: var(--navy);
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, border-color .15s, transform .1s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary.delete {
+      color: #dc2626;
+      border-color: #fee2e2;
+      background: #fff5f5;
+    }
+
+    .btn-secondary.delete:hover {
+      background: #fee2e2;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .4);
+      backdrop-filter: blur(2px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--white);
+      border-radius: 18px;
+      padding: 28px 28px 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .16);
+      animation: modalIn .18s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .modal-head h3 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--gray-500);
+      padding: 6px;
+      border-radius: 8px;
+      transition: background .15s;
+    }
+
+    .modal-close:hover { background: var(--gray-100); }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray-500);
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 12px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      background: var(--gray-50);
+      color: var(--navy);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .form-textarea { min-height: 100px; resize: vertical; }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(16, 183, 127, .12);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn-cancel,
+    .btn-save {
+      border-radius: 10px;
+      font-weight: 700;
+      padding: 11px 18px;
+      border: none;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+
+    .btn-cancel {
+      background: var(--gray-100);
+      color: var(--navy);
+    }
+
+    .btn-cancel:hover { background: var(--gray-200); }
+
+    .btn-save {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .btn-save:hover { background: #0f805f; }
+
+    @media (max-width: 900px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .category-grid { grid-template-columns: 1fr; }
+      .actions-row { flex-direction: column; align-items: stretch; }
+      .btn-secondary,
+      .icon-btn { width: 100%; }
+      .btn-add { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">
+      <i data-lucide="recycle"></i>
+      <span>EcoRecycle</span>
+      <span class="nav-badge">Admin</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="admin-dashboard.html" class="nav-link">
+         Dashboard
+      </a>
+      <a href="admin-accounts.html" class="nav-link">
+         Accounts
+      </a>
+      <a href="admin-categories.html" class="nav-link active">
+         Categories
+      </a>
+      <a href="admin-reward-rules.html" class="nav-link">
+         Reward Rules
+      </a>
+      <a href="admin-campaigns.html" class="nav-link">
+         Campaigns
+      </a>
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-icon-btn" id="notificationBtn" aria-label="Notifications">
+        <i data-lucide="bell"></i>
+        <span class="notif-dot">2</span>
+      </button>
+      <div class="notification-popup" id="notificationPopup">
+        <div class="notif-popup-header">
+          <div class="notif-popup-title">Notifications</div>
+          <button class="notif-popup-close" type="button" aria-label="Close">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="notif-popup-list">
+          <div class="notif-card unread">
+            <div class="notif-icon"><i data-lucide="bell"></i></div>
+            <div>
+              <div class="notif-title">New approval request</div>
+              <div class="notif-desc">3 user accounts are awaiting approval.</div>
+              <div class="notif-meta">1 hour ago</div>
+            </div>
+          </div>
+          <div class="notif-card">
+            <div class="notif-icon"><i data-lucide="check-circle"></i></div>
+            <div>
+              <div class="notif-title">Campaign delivered</div>
+              <div class="notif-desc">Your latest campaign was sent to 1,240 recipients.</div>
+              <div class="notif-meta">3 days ago</div>
+            </div>
+          </div>
+        </div>
+        <a href="admin-notifications.html" class="see-all-btn">See all notifications</a>
+      </div>
+      <div class="avatar-container">
+        <div class="avatar" id="profileBtn" title="Rahul Sharma">RS</div>
+        <div class="profile-popup" id="profilePopup">
+          <div class="profile-header">
+            <div class="profile-avatar">RS</div>
+            <div class="profile-info">
+              <div class="profile-name">Rahul Sharma</div>
+              <div class="profile-email">rahul@ecorecycle.com</div>
+            </div>
+          </div>
+          <div class="profile-menu">
+            <a href="admin-settings.html" class="profile-menu-item">
+              <i data-lucide="settings"></i>
+              Settings
+            </a>
+            <a href="admin-notifications.html" class="profile-menu-item">
+              <i data-lucide="bell"></i>
+              Notifications
+            </a>
+            <button class="profile-menu-item logout">
+              <i data-lucide="log-out"></i>
+              Log out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Categories</h1>
+        <p class="page-sub">Organize e-waste types and reward allocations using card-based category management.</p>
+      </div>
+      <button class="btn-add" id="openModalBtn">
+        <i data-lucide="plus"></i> Add Category
+      </button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon-wrap"><i data-lucide="layers"></i></div>
+        <div>
+          <div class="stat-val">6</div>
+          <div class="stat-label">Categories</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-wrap"><i data-lucide="package"></i></div>
+        <div>
+          <div class="stat-val">2,080</div>
+          <div class="stat-label">Items Collected</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-wrap"><i data-lucide="award"></i></div>
+        <div>
+          <div class="stat-val">25</div>
+          <div class="stat-label">Avg Points</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <div class="search-wrap">
+        <i data-lucide="search"></i>
+        <input class="search-input" type="text" placeholder="Search categories..." id="searchInput" />
+      </div>
+    </div>
+
+    <div class="category-grid" id="categoryGrid">
+      <article class="category-card" data-name="Mobile Phones" data-id="CAT001">
+        <div class="category-top">
+          <div class="category-meta">
+            <span class="category-id">CAT001</span>
+            <h2 class="category-name">Mobile Phones</h2>
+          </div>
+          <div class="cta-group">
+            <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+            <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <p class="category-desc">Smartphones, feature phones, chargers, and mobile accessories.</p>
+        <div class="category-details">
+          <div class="detail-item"><span class="detail-label">Avg weight</span><span class="detail-value">0.2 kg</span></div>
+          <div class="detail-item"><span class="detail-label">Reward points</span><span class="detail-value">15</span></div>
+          <div class="detail-item"><span class="detail-label">Collected</span><span class="detail-value">340</span></div>
+        </div>
+      </article>
+
+      <article class="category-card" data-name="Laptops & Notebooks" data-id="CAT002">
+        <div class="category-top">
+          <div class="category-meta">
+            <span class="category-id">CAT002</span>
+            <h2 class="category-name">Laptops & Notebooks</h2>
+          </div>
+          <div class="cta-group">
+            <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+            <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <p class="category-desc">Portable computers, tablets, and related accessories.</p>
+        <div class="category-details">
+          <div class="detail-item"><span class="detail-label">Avg weight</span><span class="detail-value">2.5 kg</span></div>
+          <div class="detail-item"><span class="detail-label">Reward points</span><span class="detail-value">50</span></div>
+          <div class="detail-item"><span class="detail-label">Collected</span><span class="detail-value">128</span></div>
+        </div>
+      </article>
+
+      <article class="category-card" data-name="Batteries" data-id="CAT003">
+        <div class="category-top">
+          <div class="category-meta">
+            <span class="category-id">CAT003</span>
+            <h2 class="category-name">Batteries</h2>
+          </div>
+          <div class="cta-group">
+            <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+            <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <p class="category-desc">Li-ion, lead-acid, and other rechargeable batteries.</p>
+        <div class="category-details">
+          <div class="detail-item"><span class="detail-label">Avg weight</span><span class="detail-value">0.5 kg</span></div>
+          <div class="detail-item"><span class="detail-label">Reward points</span><span class="detail-value">10</span></div>
+          <div class="detail-item"><span class="detail-label">Collected</span><span class="detail-value">560</span></div>
+        </div>
+      </article>
+
+      <article class="category-card" data-name="Home Appliances" data-id="CAT004">
+        <div class="category-top">
+          <div class="category-meta">
+            <span class="category-id">CAT004</span>
+            <h2 class="category-name">Home Appliances</h2>
+          </div>
+          <div class="cta-group">
+            <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+            <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <p class="category-desc">Microwaves, fans, toasters, and smaller household electronics.</p>
+        <div class="category-details">
+          <div class="detail-item"><span class="detail-label">Avg weight</span><span class="detail-value">5 kg</span></div>
+          <div class="detail-item"><span class="detail-label">Reward points</span><span class="detail-value">30</span></div>
+          <div class="detail-item"><span class="detail-label">Collected</span><span class="detail-value">95</span></div>
+        </div>
+      </article>
+
+      <article class="category-card" data-name="Monitors & TVs" data-id="CAT005">
+        <div class="category-top">
+          <div class="category-meta">
+            <span class="category-id">CAT005</span>
+            <h2 class="category-name">Monitors & TVs</h2>
+          </div>
+          <div class="cta-group">
+            <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+            <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <p class="category-desc">CRT, LCD, LED displays, and televisions.</p>
+        <div class="category-details">
+          <div class="detail-item"><span class="detail-label">Avg weight</span><span class="detail-value">8 kg</span></div>
+          <div class="detail-item"><span class="detail-label">Reward points</span><span class="detail-value">40</span></div>
+          <div class="detail-item"><span class="detail-label">Collected</span><span class="detail-value">67</span></div>
+        </div>
+      </article>
+
+      <article class="category-card" data-name="Cables & Chargers" data-id="CAT006">
+        <div class="category-top">
+          <div class="category-meta">
+            <span class="category-id">CAT006</span>
+            <h2 class="category-name">Cables & Chargers</h2>
+          </div>
+          <div class="cta-group">
+            <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+            <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <p class="category-desc">Power cables, USB chargers, adapters, and cords.</p>
+        <div class="category-details">
+          <div class="detail-item"><span class="detail-label">Avg weight</span><span class="detail-value">0.1 kg</span></div>
+          <div class="detail-item"><span class="detail-label">Reward points</span><span class="detail-value">5</span></div>
+          <div class="detail-item"><span class="detail-label">Collected</span><span class="detail-value">890</span></div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Add Category</h3>
+        <button class="modal-close" id="closeModalBtn"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Category Name</label>
+        <input class="form-input" type="text" placeholder="e.g. Mobile Phones" id="inputName" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" placeholder="Brief description of items in this category..." id="inputDesc"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Avg Weight (kg)</label>
+          <input class="form-input" type="number" step="0.1" min="0" placeholder="e.g. 0.5" id="inputWeight" />
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label">Reward Points</label>
+          <input class="form-input" type="number" min="0" placeholder="e.g. 20" id="inputPts" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelBtn">Cancel</button>
+        <button class="btn-save" id="saveBtn">Save Category</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    const overlay = document.getElementById('modalOverlay');
+    const openBtn = document.getElementById('openModalBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const searchInput = document.getElementById('searchInput');
+    const categoryGrid = document.getElementById('categoryGrid');
+
+    function openModal() { overlay.classList.add('open'); }
+    function closeModal() {
+      overlay.classList.remove('open');
+      ['inputName','inputDesc','inputWeight','inputPts'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+
+    function removeCard(button) {
+      const card = button.closest('.category-card');
+      if (card) card.remove();
+    }
+
+    categoryGrid.querySelectorAll('.icon-btn.del').forEach(btn => {
+      btn.addEventListener('click', () => removeCard(btn));
+    });
+
+    function createCategoryCard(id, name, desc, weight, pts, collected) {
+      const article = document.createElement('article');
+      article.className = 'category-card';
+      article.dataset.name = name.toLowerCase();
+      article.dataset.id = id;
+      article.innerHTML = `
+        <div class="category-top">
+          <div class="category-meta">
+            <span class="category-id">${id}</span>
+            <h2 class="category-name">${name}</h2>
+          </div>
+          <div class="cta-group">
+            <button class="icon-btn edit" title="Edit"><i data-lucide="pencil"></i></button>
+            <button class="icon-btn del" title="Delete"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <p class="category-desc">${desc || 'No description provided.'}</p>
+        <div class="category-details">
+          <div class="detail-item"><span class="detail-label">Avg weight</span><span class="detail-value">${weight ? weight + ' kg' : '—'}</span></div>
+          <div class="detail-item"><span class="detail-label">Reward points</span><span class="detail-value">${pts || '0'}</span></div>
+          <div class="detail-item"><span class="detail-label">Collected</span><span class="detail-value">${collected}</span></div>
+        </div>
+      `;
+
+      article.querySelectorAll('.icon-btn.del, .btn-secondary.delete').forEach(btn => {
+        btn.addEventListener('click', () => removeCard(btn));
+      });
+
+      return article;
+    }
+
+    saveBtn.addEventListener('click', () => {
+      const name = document.getElementById('inputName').value.trim();
+      const desc = document.getElementById('inputDesc').value.trim();
+      const weight = document.getElementById('inputWeight').value.trim();
+      const pts = document.getElementById('inputPts').value.trim();
+      if (!name) {
+        document.getElementById('inputName').focus();
+        return;
+      }
+
+      const count = categoryGrid.querySelectorAll('.category-card').length + 1;
+      const id = 'CAT' + String(count).padStart(3, '0');
+      const card = createCategoryCard(id, name, desc, weight, pts, '0');
+      categoryGrid.appendChild(card);
+      lucide.createIcons();
+      closeModal();
+    });
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      document.querySelectorAll('.category-card').forEach(card => {
+        const matches = card.dataset.name.includes(query) || card.dataset.id.toLowerCase().includes(query);
+        card.style.display = matches ? '' : 'none';
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+lucide.createIcons();
+
+const API = "http://127.0.0.1:8082/api";
+const currentUser = JSON.parse(localStorage.getItem("ecorepair_user") || "null");
+
+if (!currentUser || !currentUser.email) {
+  window.location.href = "Login.html";
+  return;
+}
+
+const profileBtn = document.getElementById("profileBtn");
+const profilePopup = document.getElementById("profilePopup");
+
+// ===== Toggle popup — set up ONCE, outside renderProfile =====
+if (profileBtn && profilePopup) {
+  profileBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    profilePopup.classList.toggle("active");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!profileBtn.contains(e.target) && !profilePopup.contains(e.target)) {
+      profilePopup.classList.remove("active");
+    }
+  });
+} else {
+  console.error("profileBtn or profilePopup not found on this page.");
+}
+
+function initials(name) {
+  return (name || "User")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(w => w[0].toUpperCase())
+    .join("") || "U";
+}
+
+// ===== renderProfile ONLY updates text — no listeners in here =====
+function renderProfile(user) {
+  const ini = initials(user.fullName);
+
+  if (profileBtn) {
+    profileBtn.textContent = ini;
+    profileBtn.title = user.fullName;
+  }
+
+  document.querySelector(".profile-popup .profile-avatar").textContent = ini;
+  document.querySelector(".profile-popup .profile-name").textContent = user.fullName;
+  document.querySelector(".profile-popup .profile-email").textContent = user.email;
+}
+
+async function loadProfile() {
+  renderProfile(currentUser); // instant paint
+
+  try {
+    const res = await fetch(`${API}/users/profile?email=${encodeURIComponent(currentUser.email)}`);
+    if (res.ok) {
+      const freshUser = await res.json();
+      renderProfile(freshUser); // overwrite with fresh data — text only, no re-attaching listeners
+      localStorage.setItem("ecorepair_user", JSON.stringify({ ...currentUser, ...freshUser }));
+    }
+  } catch (err) {
+    console.error("Could not refresh profile:", err);
+  }
+}
+
+loadProfile();
+
+// Logout
+document.querySelector(".profile-menu-item.logout")?.addEventListener("click", () => {
+  localStorage.removeItem("ecorepair_user");
+  window.location.href = "Login.html";
+});
+
+});
+
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationPopup = document.getElementById('notificationPopup');
+    const notificationClose = document.querySelector('.notif-popup-close');
+
+    if (notificationBtn && notificationPopup) {
+      notificationBtn.addEventListener('click', () => notificationPopup.classList.toggle('active'));
+      if (notificationClose) {
+        notificationClose.addEventListener('click', () => notificationPopup.classList.remove('active'));
+      }
+      document.addEventListener('click', e => {
+        if (!notificationBtn.contains(e.target) && !notificationPopup.contains(e.target)) {
+          notificationPopup.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
